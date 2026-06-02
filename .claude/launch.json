@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "99chill",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-p", "3456", "--single", "99chill.html", "."],
+      "port": 3456
+    }
+  ]
+}

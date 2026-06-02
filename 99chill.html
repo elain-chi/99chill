@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>九九乘法挑戰賽</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--orange:#FF8C00;--blue:#1E90FF;--bg:#FFFDF0;--green:#28C828;--red:#EE3333;--gold:#FFD700}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;max-width:480px;margin:0 auto;overflow-x:hidden;position:relative}
+
+/* ── Pages ── */
+.page{display:none;flex-direction:column;min-height:100vh;padding:14px 16px 20px}
+.page.active{display:flex}
+
+/* ── Header ── */
+.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.coin-badge{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.coin-pill{background:var(--gold);border-radius:20px;padding:5px 14px;font-size:1rem;font-weight:700;color:#7B4F00;display:flex;align-items:center;gap:6px}
+.latest-badge{font-size:1.4rem;text-align:right}
+
+/* ── Home Title (single line, bigger) ── */
+.main-title{font-size:1.85rem;font-weight:900;color:var(--orange);white-space:nowrap;text-shadow:2px 2px 0 rgba(255,140,0,.15);line-height:1.1}
+
+/* ── Level grid ── */
+.level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:8px 0}
+.lvl-btn{background:linear-gradient(135deg,#1E90FF,#00BFFF);color:#fff;border:none;border-radius:14px;padding:16px 8px;font-size:2rem;font-weight:900;cursor:pointer;position:relative;min-height:76px;box-shadow:0 4px 10px rgba(30,144,255,.3);transition:transform .1s,box-shadow .1s;touch-action:manipulation}
+.lvl-btn:active{transform:scale(.94);box-shadow:0 2px 4px rgba(30,144,255,.2)}
+.lvl-check{position:absolute;top:4px;right:6px;font-size:.85rem}
+
+/* ── Badge section ── */
+.badge-sec h2{font-size:1rem;color:#666;text-align:center;margin-bottom:10px}
+.badge-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.badge-cell{text-align:center;padding:6px 2px;border-radius:10px;background:#F0F0F0}
+.badge-cell.unlocked{background:linear-gradient(135deg,#FFE27A,#FFA500);box-shadow:0 2px 6px rgba(255,165,0,.4)}
+.badge-cell .be{font-size:1.6rem;display:block}
+.badge-cell .bn{font-size:.55rem;color:#888;margin-top:2px}
+.badge-cell.unlocked .bn{color:#7B4F00;font-weight:700}
+
+/* ── Buttons ── */
+.btn{border:none;border-radius:14px;font-size:1.2rem;font-weight:700;cursor:pointer;width:100%;min-height:56px;transition:transform .1s;touch-action:manipulation}
+.btn:active{transform:scale(.97)}
+.btn-orange{background:linear-gradient(135deg,#FF8C00,#FF6B00);color:#fff;box-shadow:0 4px 12px rgba(255,140,0,.4)}
+.btn-blue{background:linear-gradient(135deg,#1E90FF,#0070E0);color:#fff;box-shadow:0 4px 12px rgba(30,144,255,.4);margin-top:10px}
+.btn-grey{background:#E0E0E0;color:#555;margin-top:10px}
+
+/* ── Mult table preview ── */
+.mult-table{font-size:1.5rem;font-weight:700;line-height:2.3;text-align:center;color:#333;flex:1;overflow-y:auto}
+
+/* ── Quiz timer ── */
+.timer-wrap{text-align:center;margin:2px 0 6px}
+#quiz-timer{font-size:2.6rem;font-weight:900;display:inline-block;transition:color .25s,transform .2s;min-width:60px}
+
+/* ── Quiz / common ── */
+.prog-bar-wrap{background:#E8E8E8;border-radius:8px;height:8px;margin-bottom:8px;overflow:hidden}
+.prog-bar{background:linear-gradient(90deg,var(--orange),#FFB347);height:8px;border-radius:8px;transition:width .4s}
+.prog-text{text-align:center;font-size:.9rem;color:#888;margin-bottom:6px}
+.q-box{background:#fff;border-radius:20px;box-shadow:0 4px 16px rgba(0,0,0,.08);padding:18px;text-align:center;font-size:2.8rem;font-weight:900;color:#222;margin:6px 0}
+.inp-box{background:#fff;border:3px solid var(--blue);border-radius:14px;padding:12px 16px;font-size:2.2rem;font-weight:700;text-align:center;min-height:64px;color:#222;margin:6px 0;letter-spacing:4px}
+
+/* ── Numpad ── */
+.numpad{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:6px 0}
+.np-btn{background:#fff;border:2px solid #ddd;border-radius:12px;font-size:1.5rem;font-weight:700;min-height:60px;cursor:pointer;color:#333;box-shadow:0 2px 4px rgba(0,0,0,.08);transition:transform .08s,background .08s;touch-action:manipulation}
+.np-btn:active{transform:scale(.9);background:#eee}
+.np-del{background:#FFEAEA;border-color:#FFBBBB;color:#CC0000;font-size:1rem}
+.np-ok{grid-column:span 3;background:linear-gradient(135deg,#28C828,#1EA81E);color:#fff;border:none;border-radius:12px;font-size:1.2rem;font-weight:700;min-height:60px;cursor:pointer;box-shadow:0 4px 10px rgba(40,200,40,.35);touch-action:manipulation}
+.np-ok:active{transform:scale(.97)}
+
+/* ── Feedback text ── */
+.fb{text-align:center;font-size:1.1rem;font-weight:700;min-height:36px;margin-top:4px}
+
+/* ── App page choices ── */
+.choice-btn{background:#fff;border:3px solid var(--blue);border-radius:14px;padding:16px;font-size:1.2rem;font-weight:700;cursor:pointer;width:100%;min-height:60px;margin:7px 0;color:#333;transition:transform .1s,background .1s;touch-action:manipulation}
+.choice-btn:active{transform:scale(.97);background:#EEF6FF}
+.choice-btn.ok{background:#EFFFEF;border-color:var(--green)}
+.choice-btn.no{background:#FFEEEE;border-color:var(--red)}
+
+/* ── Review: Circular flip cards ── */
+.flip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:8px 0}
+.flip-card{perspective:700px;aspect-ratio:1;cursor:pointer}
+.fc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s;border-radius:50%}
+.flip-card.flipped .fc-inner{transform:rotateY(180deg)}
+
+/* Card faces — both circular */
+.fc-front,.fc-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+
+/* BACK (face-down) — big football emoji, no background */
+.fc-front{background:transparent;box-shadow:none;font-size:4.5rem;line-height:1}
+
+/* FACE (face-up) — white circle with question */
+.fc-back{background:transparent;border:none;box-shadow:none;transform:rotateY(180deg)}
+.card-circle{width:88%;height:88%;background:#fff;border-radius:50%;border:3px solid #ddd;box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:#222;text-align:center;line-height:1.3}
+
+/* Selected (before flip) */
+.flip-card.selected .fc-front{filter:drop-shadow(0 0 8px rgba(255,215,0,.9))}
+@keyframes selPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.flip-card.selected .fc-inner{animation:selPulse .8s ease-in-out infinite}
+
+/* Currently answering — gold ring on white circle */
+.flip-card.answering .card-circle{border-color:var(--gold);box-shadow:0 0 0 4px var(--gold),0 0 20px rgba(255,215,0,.65)}
+
+/* ── Coin animation ── */
+.coin-anim{position:fixed;font-size:1.3rem;font-weight:700;z-index:500;pointer-events:none;animation:floatUp .9s ease-out forwards}
+.coin-anim.pos{color:#B8860B;text-shadow:0 0 6px rgba(255,215,0,.8)}
+.coin-anim.neg{color:var(--red)}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(.8)}}
+
+/* ── Modals ── */
+.modal-ov{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.55);z-index:400;display:none;align-items:center;justify-content:center}
+.modal-ov.active{display:flex}
+.modal-box{background:#fff;border-radius:24px;padding:28px 22px;max-width:340px;width:90%;text-align:center;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{0%{transform:scale(.2);opacity:0}100%{transform:scale(1);opacity:1}}
+.modal-big-emoji{font-size:5rem;display:block;margin:12px 0;animation:emojiPop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes emojiPop{0%{transform:scale(0) rotate(-20deg)}100%{transform:scale(1) rotate(0)}}
+.modal-title{font-size:1.4rem;font-weight:900;color:var(--orange);margin-bottom:6px}
+.modal-story{font-size:.95rem;color:#666;margin:8px 0 18px}
+
+/* ── Back button ── */
+.back-btn{background:none;border:none;font-size:1.6rem;cursor:pointer;color:#888;padding:4px 8px}
+
+/* ── Responsive ── */
+@media(min-width:768px){body{max-width:560px}.q-box{font-size:3.2rem}}
+@media(max-height:600px){.mult-table{font-size:1.2rem;line-height:1.9}.q-box{font-size:2rem;padding:12px}}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: HOME -->
+<div id="pg-home" class="page active">
+  <div class="hdr">
+    <div class="main-title">99乘法挑戰賽</div>
+    <div class="coin-badge">
+      <div class="coin-pill">🥨<span id="home-coins">0</span></div>
+      <div class="latest-badge" id="home-badge"></div>
+    </div>
+  </div>
+  <div class="level-grid" id="level-grid"></div>
+  <div class="badge-sec" style="margin-top:12px">
+    <h2>🏅 我的獎章</h2>
+    <div class="badge-grid" id="badge-grid"></div>
+  </div>
+</div>
+
+<!-- PAGE 2: PREVIEW -->
+<div id="pg-preview" class="page">
+  <div class="hdr">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <div id="preview-title" style="font-size:1.3rem;font-weight:700;color:var(--orange)"></div>
+    <div class="coin-pill">🥨<span id="prev-coins">0</span></div>
+  </div>
+  <div class="mult-table" id="mult-table"></div>
+  <div style="margin-top:auto;padding-top:16px">
+    <p style="text-align:center;color:#666;font-size:1.05rem;margin-bottom:12px">記住了嗎？</p>
+    <button class="btn btn-orange" onclick="startQuiz()">🚀 開始挑戰</button>
+  </div>
+</div>
+
+<!-- PAGE 3: QUIZ (no confirm button, has timer) -->
+<div id="pg-quiz" class="page">
+  <div class="hdr">
+    <div style="font-size:.95rem;color:#888">快問快答</div>
+    <div class="coin-pill">🥨<span id="quiz-coins">0</span></div>
+  </div>
+  <div class="prog-text" id="quiz-prog-text"></div>
+  <div class="prog-bar-wrap"><div class="prog-bar" id="quiz-prog-bar" style="width:0%"></div></div>
+  <div class="timer-wrap">
+    <span id="quiz-timer" style="color:#28C828">3</span>
+    <span style="font-size:1rem;color:#888;margin-left:2px">秒</span>
+  </div>
+  <div class="q-box" id="quiz-q">？</div>
+  <div class="inp-box" id="quiz-inp">_</div>
+  <div class="numpad">
+    <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('0',0)">0</button>
+    <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('1',0)">1</button>
+    <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('2',0)">2</button>
+    <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('3',0)">3</button>
+    <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('4',0)">4</button>
+    <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('5',0)">5</button>
+    <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('6',0)">6</button>
+    <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('7',0)">7</button>
+    <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('8',0)">8</button>
+    <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('9',0)">9</button>
+    <button class="np-btn np-del" style="grid-column:span 5" ontouchstart="ev(event)" onclick="nDel(0)">⌫ 刪除</button>
+  </div>
+  <div class="fb" id="quiz-fb"></div>
+</div>
+
+<!-- PAGE 4: APPLICATION -->
+<div id="pg-app" class="page">
+  <div class="hdr">
+    <div style="font-size:.95rem;color:#888">應用題</div>
+    <div class="coin-pill">🥨<span id="app-coins">0</span></div>
+  </div>
+  <div class="prog-text" id="app-prog-text"></div>
+  <div class="prog-bar-wrap"><div class="prog-bar" id="app-prog-bar" style="width:0%"></div></div>
+  <div class="q-box" style="font-size:1.3rem;line-height:1.6" id="app-q">應用題</div>
+  <div id="app-choices"></div>
+  <div class="fb" id="app-fb"></div>
+</div>
+
+<!-- PAGE 5: REVIEW (flip cards) -->
+<div id="pg-review" class="page">
+  <div class="hdr">
+    <div style="font-size:1rem;font-weight:700;color:var(--orange)" id="rev-title">複習關卡</div>
+    <div class="coin-pill">🥨<span id="rev-coins">0</span></div>
+  </div>
+  <p style="text-align:center;color:#666;font-size:.95rem;margin-bottom:4px" id="rev-inst">請選 3 張牌，答對就過關！</p>
+  <div class="flip-grid" id="flip-grid"></div>
+  <div id="rev-ans-area" style="display:none">
+    <div style="font-size:2rem;font-weight:900;text-align:center;margin:8px 0" id="rev-q"></div>
+    <div class="inp-box" id="rev-inp">_</div>
+    <div class="numpad">
+      <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('0',1)">0</button>
+      <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('1',1)">1</button>
+      <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('2',1)">2</button>
+      <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('3',1)">3</button>
+      <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('4',1)">4</button>
+      <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('5',1)">5</button>
+      <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('6',1)">6</button>
+      <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('7',1)">7</button>
+      <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('8',1)">8</button>
+      <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('9',1)">9</button>
+      <button class="np-btn np-del" style="grid-column:span 2" ontouchstart="ev(event)" onclick="nDel(1)">⌫ 刪除</button>
+      <button class="np-ok" ontouchstart="ev(event)" onclick="submitReview()">確定 ✓</button>
+    </div>
+    <div class="fb" id="rev-fb"></div>
+  </div>
+</div>
+
+<!-- BADGE MODAL -->
+<div class="modal-ov" id="badge-modal">
+  <div class="modal-box">
+    <div class="modal-title" id="bm-title">🎉 恭喜！解鎖了</div>
+    <span class="modal-big-emoji" id="bm-emoji">🌟</span>
+    <div class="modal-story" id="bm-story"></div>
+    <button class="btn btn-orange" onclick="closeBadgeModal()">繼續挑戰</button>
+  </div>
+</div>
+
+<!-- LEVEL COMPLETE MODAL -->
+<div class="modal-ov" id="done-modal">
+  <div class="modal-box">
+    <div class="modal-title">🎊 過關了！</div>
+    <span class="modal-big-emoji">🏆</span>
+    <div class="modal-story">太棒了！這關全部答對，繼續下一關吧！</div>
+    <button class="btn btn-orange" id="next-lvl-btn" onclick="nextLevel()">繼續挑戰下一關</button>
+    <button class="btn btn-blue" onclick="goHome()">回到首頁選關</button>
+  </div>
+</div>
+
+<!-- LEAVE CONFIRM MODAL -->
+<div class="modal-ov" id="leave-modal">
+  <div class="modal-box">
+    <div class="modal-title" style="color:#444">確定要離開嗎？</div>
+    <div class="modal-story">離開後進度不會保存喔！</div>
+    <button class="btn btn-orange" onclick="closeModal('leave-modal')">繼續玩！</button>
+    <button class="btn btn-grey" onclick="leaveGame()">離開</button>
+  </div>
+</div>
+
+<script>
+function ev(e){e.preventDefault()}
+
+// ── DATA ──────────────────────────────────
+const BADGES=[
+  {id:'butterfly',e:'🦋',name:'小蝴蝶',  th:50,   s:'你答對了很多題，蝴蝶飛來幫你加油！'},
+  {id:'frog',     e:'🐸',name:'青蛙王',  th:150,  s:'你越來越厲害，青蛙跳出來為你歡呼！'},
+  {id:'cat',      e:'🐱',name:'貓咪俠',  th:300,  s:'你超厲害，貓咪覺得你太帥了！'},
+  {id:'fox',      e:'🦊',name:'小狐狸',  th:500,  s:'你很聰明，狐狸來向你學習計算了！'},
+  {id:'panda',    e:'🐼',name:'貓熊武士',th:700,  s:'你超猛，熊貓從竹林裡衝出來看你！'},
+  {id:'eagle',    e:'🦅',name:'老鷹俠客',th:1000, s:'你像老鷹一樣飛翔在知識的天空！'},
+  {id:'lion',     e:'🦁',name:'獅子大王',th:1300, s:'你是最強的，獅子讓出王位給你！'},
+  {id:'dolphin',  e:'🐬',name:'海豚跳跳',th:1600, s:'你好厲害，海豚跳出海面為你喝采！'},
+  {id:'octopus',  e:'🐙',name:'章魚博士',th:2000, s:'你太聰明了，章魚博士要收你為徒！'},
+  {id:'unicorn',  e:'🦄',name:'傳說獨角獸',th:Infinity,s:'你獲得所有獎章，傳說獨角獸降臨了！'},
+];
+
+const AQ={
+1:[
+  {t:'小明有1個盒子，每個盒子裝3顆糖，共有幾顆糖？',n:1,m:3},
+  {t:'1隻章魚有5條觸手，共有幾條觸手？',n:1,m:5},
+  {t:'小花有1個花盆，每個花盆種7朵花，共有幾朵花？',n:1,m:7},
+  {t:'1輛車有9個座位，共有幾個座位？',n:1,m:9},
+  {t:'小明的1個書包裡放4本書，共有幾本書？',n:1,m:4},
+  {t:'1個籃子裝6顆蘋果，共有幾顆蘋果？',n:1,m:6},
+  {t:'小狗有1條尾巴，有8根毛，共有幾根毛？',n:1,m:8},
+  {t:'1位小朋友有2支鉛筆，共有幾支鉛筆？',n:1,m:2},
+  {t:'爸爸帶1個小孩去公園，每人拿4個氣球，共有幾個氣球？',n:1,m:4},
+  {t:'1張桌子有6條腿，共有幾條腿？',n:1,m:6},
+  {t:'媽媽買1盒餅乾，每盒有5片，共有幾片餅乾？',n:1,m:5},
+  {t:'小明跑了1圈操場，每圈有9個彎道，共有幾個彎道？',n:1,m:9},
+],
+2:[
+  {t:'小明有2個盒子，每個盒子裝3顆糖，共有幾顆糖？',n:2,m:3},
+  {t:'2隻章魚各有5條觸手，共有幾條觸手？',n:2,m:5},
+  {t:'小花有2個花盆，每個花盆種6朵花，共有幾朵花？',n:2,m:6},
+  {t:'2個蘋果各有4個籽，共有幾個籽？',n:2,m:4},
+  {t:'小明有2個書架，每個書架放7本書，共有幾本書？',n:2,m:7},
+  {t:'2個籃子各裝9顆橘子，共有幾顆橘子？',n:2,m:9},
+  {t:'2隻小狗各有8根毛，共有幾根毛？',n:2,m:8},
+  {t:'2位小朋友各有2支鉛筆，共有幾支鉛筆？',n:2,m:2},
+  {t:'爸爸有2個購物袋，每袋裝5個水果，共有幾個水果？',n:2,m:5},
+  {t:'2張桌子各有3條腿，共有幾條腿？',n:2,m:3},
+  {t:'媽媽買2盒蛋糕，每盒有6片，共有幾片蛋糕？',n:2,m:6},
+  {t:'2隻小貓各有1條尾巴，共有幾條尾巴？',n:2,m:1},
+],
+3:[
+  {t:'小明有3個盒子，每個盒子裝4顆糖，共有幾顆糖？',n:3,m:4},
+  {t:'3隻小鳥各有3根羽毛，共有幾根羽毛？',n:3,m:3},
+  {t:'小花有3個花盆，每個花盆種5朵花，共有幾朵花？',n:3,m:5},
+  {t:'3個蘋果各有6個籽，共有幾個籽？',n:3,m:6},
+  {t:'小明有3個書架，每個書架放7本書，共有幾本書？',n:3,m:7},
+  {t:'3張桌子各有2條腿，共有幾條腿？',n:3,m:2},
+  {t:'3個鞋盒各裝8雙鞋，共有幾雙鞋？',n:3,m:8},
+  {t:'3位小朋友各有9個玩具，共有幾個玩具？',n:3,m:9},
+  {t:'媽媽有3個購物袋，每袋裝4個橘子，共有幾個橘子？',n:3,m:4},
+  {t:'3個花瓶各插6朵玫瑰，共有幾朵玫瑰？',n:3,m:6},
+  {t:'3隻章魚各有5條觸手，共有幾條觸手？',n:3,m:5},
+  {t:'3位小朋友各有1個書包，共有幾個書包？',n:3,m:1},
+],
+4:[
+  {t:'小明有4個盒子，每個盒子裝2顆糖，共有幾顆糖？',n:4,m:2},
+  {t:'4隻小鳥各有3根羽毛，共有幾根羽毛？',n:4,m:3},
+  {t:'小花有4個花盆，每個花盆種4朵花，共有幾朵花？',n:4,m:4},
+  {t:'4個蘋果各有5個籽，共有幾個籽？',n:4,m:5},
+  {t:'小明有4個書架，每個書架放6本書，共有幾本書？',n:4,m:6},
+  {t:'4位小朋友各有7個玩具，共有幾個玩具？',n:4,m:7},
+  {t:'4個籃子各裝8顆橘子，共有幾顆橘子？',n:4,m:8},
+  {t:'4張桌子各有9條腿，共有幾條腿？',n:4,m:9},
+  {t:'媽媽有4個購物袋，每袋裝3個水果，共有幾個水果？',n:4,m:3},
+  {t:'4個花瓶各插5朵玫瑰，共有幾朵玫瑰？',n:4,m:5},
+  {t:'4隻章魚各有6條觸手，共有幾條觸手？',n:4,m:6},
+  {t:'4隻小狗各有1條尾巴，共有幾條尾巴？',n:4,m:1},
+],
+5:[
+  {t:'小明有5個盒子，每個盒子裝2顆糖，共有幾顆糖？',n:5,m:2},
+  {t:'5隻小鳥各有3根羽毛，共有幾根羽毛？',n:5,m:3},
+  {t:'小花有5個花盆，每個花盆種4朵花，共有幾朵花？',n:5,m:4},
+  {t:'5個蘋果各有5個籽，共有幾個籽？',n:5,m:5},
+  {t:'小明有5個書架，每個書架放6本書，共有幾本書？',n:5,m:6},
+  {t:'5位小朋友各有7個玩具，共有幾個玩具？',n:5,m:7},
+  {t:'5個籃子各裝8顆橘子，共有幾顆橘子？',n:5,m:8},
+  {t:'5張桌子各有9條腿，共有幾條腿？',n:5,m:9},
+  {t:'媽媽有5個購物袋，每袋裝4個水果，共有幾個水果？',n:5,m:4},
+  {t:'5個花瓶各插6朵玫瑰，共有幾朵玫瑰？',n:5,m:6},
+  {t:'5隻章魚各有7條觸手，共有幾條觸手？',n:5,m:7},
+  {t:'5隻小狗各有1條尾巴，共有幾條尾巴？',n:5,m:1},
+],
+6:[
+  {t:'小明有6個盒子，每個盒子裝2顆糖，共有幾顆糖？',n:6,m:2},
+  {t:'6位小朋友各有3個玩具，共有幾個玩具？',n:6,m:3},
+  {t:'小花有6個花盆，每個花盆種4朵花，共有幾朵花？',n:6,m:4},
+  {t:'6個蘋果各有5個籽，共有幾個籽？',n:6,m:5},
+  {t:'小明有6個書架，每個書架放6本書，共有幾本書？',n:6,m:6},
+  {t:'6個籃子各裝7顆橘子，共有幾顆橘子？',n:6,m:7},
+  {t:'6張桌子各有8條腿，共有幾條腿？',n:6,m:8},
+  {t:'6隻章魚各有9條觸手，共有幾條觸手？',n:6,m:9},
+  {t:'媽媽有6個購物袋，每袋裝4個水果，共有幾個水果？',n:6,m:4},
+  {t:'6個花瓶各插5朵玫瑰，共有幾朵玫瑰？',n:6,m:5},
+  {t:'6隻小鳥各有7根羽毛，共有幾根羽毛？',n:6,m:7},
+  {t:'6隻小狗各有1條尾巴，共有幾條尾巴？',n:6,m:1},
+],
+7:[
+  {t:'小明有7個盒子，每個盒子裝2顆糖，共有幾顆糖？',n:7,m:2},
+  {t:'7位小朋友各有3個玩具，共有幾個玩具？',n:7,m:3},
+  {t:'小花有7個花盆，每個花盆種4朵花，共有幾朵花？',n:7,m:4},
+  {t:'7個蘋果各有5個籽，共有幾個籽？',n:7,m:5},
+  {t:'小明有7個書架，每個書架放6本書，共有幾本書？',n:7,m:6},
+  {t:'7個籃子各裝7顆橘子，共有幾顆橘子？',n:7,m:7},
+  {t:'7張桌子各有8條腿，共有幾條腿？',n:7,m:8},
+  {t:'7隻章魚各有9條觸手，共有幾條觸手？',n:7,m:9},
+  {t:'7個花瓶各插4朵玫瑰，共有幾朵玫瑰？',n:7,m:4},
+  {t:'7隻小鳥各有5根羽毛，共有幾根羽毛？',n:7,m:5},
+  {t:'7位同學各有6支鉛筆，共有幾支鉛筆？',n:7,m:6},
+  {t:'7隻小狗各有1條尾巴，共有幾條尾巴？',n:7,m:1},
+],
+8:[
+  {t:'小明有8個盒子，每個盒子裝2顆糖，共有幾顆糖？',n:8,m:2},
+  {t:'8位小朋友各有3個玩具，共有幾個玩具？',n:8,m:3},
+  {t:'小花有8個花盆，每個花盆種4朵花，共有幾朵花？',n:8,m:4},
+  {t:'8個蘋果各有5個籽，共有幾個籽？',n:8,m:5},
+  {t:'小明有8個書架，每個書架放6本書，共有幾本書？',n:8,m:6},
+  {t:'8個籃子各裝7顆橘子，共有幾顆橘子？',n:8,m:7},
+  {t:'8張桌子各有8條腿，共有幾條腿？',n:8,m:8},
+  {t:'8隻章魚各有9條觸手，共有幾條觸手？',n:8,m:9},
+  {t:'媽媽有8個購物袋，每袋裝4個水果，共有幾個水果？',n:8,m:4},
+  {t:'8個花瓶各插5朵玫瑰，共有幾朵玫瑰？',n:8,m:5},
+  {t:'8隻小鳥各有6根羽毛，共有幾根羽毛？',n:8,m:6},
+  {t:'8隻小狗各有1條尾巴，共有幾條尾巴？',n:8,m:1},
+],
+9:[
+  {t:'小明有9個盒子，每個盒子裝2顆糖，共有幾顆糖？',n:9,m:2},
+  {t:'9位小朋友各有3個玩具，共有幾個玩具？',n:9,m:3},
+  {t:'小花有9個花盆，每個花盆種4朵花，共有幾朵花？',n:9,m:4},
+  {t:'9個蘋果各有5個籽，共有幾個籽？',n:9,m:5},
+  {t:'小明有9個書架，每個書架放6本書，共有幾本書？',n:9,m:6},
+  {t:'9個籃子各裝7顆橘子，共有幾顆橘子？',n:9,m:7},
+  {t:'9張桌子各有8條腿，共有幾條腿？',n:9,m:8},
+  {t:'9隻章魚各有9條觸手，共有幾條觸手？',n:9,m:9},
+  {t:'9個花瓶各插4朵玫瑰，共有幾朵玫瑰？',n:9,m:4},
+  {t:'9隻小鳥各有5根羽毛，共有幾根羽毛？',n:9,m:5},
+  {t:'9位同學各有6支鉛筆，共有幾支鉛筆？',n:9,m:6},
+  {t:'9隻小狗各有1條尾巴，共有幾條尾巴？',n:9,m:1},
+],
+};
+
+// ── STATE ─────────────────────────────────
+let G={coins:0,displayCoins:0,unlockedBadges:[],completedLevels:[],currentLevel:null};
+let badgeQueue=[];
+let badgeCb=null;
+let busy=false;
+
+let QZ={qs:[],idx:0,total:30,inp:''};
+let AP={qs:[],idx:0,total:10};
+let RV={cards:[],sel:[],answering:false,queue:[],qIdx:0,inp:'',allOk:true};
+
+// Quiz timer
+let qzInterval=null;
+let qzAutoTO=null;
+let qzTimeLeft=3;
+
+// ── AUDIO ─────────────────────────────────
+let actx=null;
+function getACtx(){
+  if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==='suspended') actx.resume();
+  return actx;
+}
+function tone(f,d,t='sine',g=0.28){
+  const c=getACtx(),o=c.createOscillator(),gn=c.createGain();
+  o.connect(gn);gn.connect(c.destination);
+  o.type=t;o.frequency.setValueAtTime(f,c.currentTime);
+  gn.gain.setValueAtTime(g,c.currentTime);
+  gn.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);
+  o.start(c.currentTime);o.stop(c.currentTime+d);
+}
+function sndCorrect(){tone(523,.1);setTimeout(()=>tone(659,.1),100);setTimeout(()=>tone(784,.2),200)}
+function sndWrong(){tone(180,.35,'square',.18)}
+function sndCoin(){tone(880,.05);setTimeout(()=>tone(1100,.12),65)}
+function sndBadge(){[523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>tone(f,.28),i*110))}
+function sndVictory(){[523,659,784,880,1047].forEach((f,i)=>setTimeout(()=>tone(f,.22),i*90))}
+
+// ── STORAGE ───────────────────────────────
+function save(){localStorage.setItem('99chill',JSON.stringify(G))}
+function load(){
+  try{const d=localStorage.getItem('99chill');if(d)G={...G,...JSON.parse(d)}}catch(e){}
+}
+
+// ── UTILS ─────────────────────────────────
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pg-'+id).classList.add('active');
+  updateCoins();
+}
+
+function updateCoins(){
+  const v=G.displayCoins;
+  ['home','prev','quiz','app','rev'].forEach(id=>{
+    const el=document.getElementById(id+'-coins');
+    if(el) el.textContent=v;
+  });
+}
+
+function coinAnim(amount,refEl){
+  const el=document.createElement('div');
+  el.className='coin-anim '+(amount>0?'pos':'neg');
+  el.textContent=(amount>0?'+':'')+amount+' 幸運餅乾';
+  const rect=refEl?refEl.getBoundingClientRect():null;
+  el.style.left=(rect?rect.left+rect.width/2-40:window.innerWidth/2-40)+'px';
+  el.style.top=(rect?rect.top:window.innerHeight*0.4)+'px';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),950);
+}
+
+function openModal(id){document.getElementById(id).classList.add('active')}
+function closeModal(id){document.getElementById(id).classList.remove('active')}
+
+// ── COINS & BADGES ────────────────────────
+function earnCoins(n,ref){
+  G.coins+=n;G.displayCoins+=n;
+  checkBadges();save();updateCoins();sndCoin();
+  coinAnim(n,ref);
+}
+function loseCoins(n,ref){
+  G.displayCoins=Math.max(0,G.displayCoins-n);
+  save();updateCoins();
+  coinAnim(-n,ref);
+}
+
+function checkBadges(){
+  BADGES.forEach(b=>{
+    if(b.id==='unicorn') return;
+    if(!G.unlockedBadges.includes(b.id)&&G.coins>=b.th){
+      G.unlockedBadges.push(b.id);
+      badgeQueue.push(b);
+      const main=BADGES.filter(x=>x.id!=='unicorn').map(x=>x.id);
+      if(main.every(id=>G.unlockedBadges.includes(id))&&!G.unlockedBadges.includes('unicorn')){
+        G.unlockedBadges.push('unicorn');
+        badgeQueue.push(BADGES.find(x=>x.id==='unicorn'));
+      }
+      save();
+    }
+  });
+}
+
+function showBadgeIfAny(cb){
+  if(badgeQueue.length===0){if(cb)cb();return;}
+  const b=badgeQueue.shift();
+  document.getElementById('bm-title').textContent='🎉 恭喜！解鎖了'+b.name;
+  document.getElementById('bm-emoji').textContent=b.e;
+  document.getElementById('bm-story').textContent=b.s;
+  badgeCb=cb;
+  openModal('badge-modal');
+  sndBadge();
+}
+
+function closeBadgeModal(){
+  closeModal('badge-modal');
+  setTimeout(()=>showBadgeIfAny(badgeCb),350);
+}
+
+// ── HOME PAGE ─────────────────────────────
+function renderHome(){
+  const lg=document.getElementById('level-grid');
+  lg.innerHTML='';
+  for(let i=1;i<=9;i++){
+    const done=G.completedLevels.includes(i);
+    const btn=document.createElement('button');
+    btn.className='lvl-btn';
+    btn.innerHTML=`${i}${done?'<span class="lvl-check">✅</span>':''}`;
+    btn.onclick=()=>enterLevel(i);
+    lg.appendChild(btn);
+  }
+  const bg=document.getElementById('badge-grid');
+  bg.innerHTML='';
+  BADGES.forEach(b=>{
+    const u=G.unlockedBadges.includes(b.id);
+    bg.innerHTML+=`<div class="badge-cell ${u?'unlocked':''}"><span class="be">${u?b.e:'🔒'}</span><div class="bn">${u?b.name:'???'}</div></div>`;
+  });
+  const latest=[...BADGES].reverse().find(b=>G.unlockedBadges.includes(b.id));
+  document.getElementById('home-badge').textContent=latest?latest.e:'';
+  document.getElementById('home-coins').textContent=G.displayCoins;
+}
+
+function goHome(){
+  clearQTimers();
+  closeModal('done-modal');
+  closeModal('leave-modal');
+  renderHome();
+  showPage('home');
+}
+
+function enterLevel(n){
+  G.currentLevel=n;save();
+  showPreview(n);
+}
+
+// ── PREVIEW PAGE ──────────────────────────
+function showPreview(n){
+  document.getElementById('preview-title').textContent=`${n} 的乘法`;
+  let html='';
+  for(let i=1;i<=9;i++) html+=`${n} × ${i} = ${n*i}<br>`;
+  document.getElementById('mult-table').innerHTML=html;
+  showPage('preview');
+}
+
+// ── QUIZ TIMER ────────────────────────────
+function clearQTimers(){
+  if(qzInterval){clearInterval(qzInterval);qzInterval=null;}
+  if(qzAutoTO){clearTimeout(qzAutoTO);qzAutoTO=null;}
+}
+
+function startQTimer(){
+  clearQTimers();
+  qzTimeLeft=3;
+  updateTimerEl();
+  qzInterval=setInterval(()=>{
+    qzTimeLeft--;
+    updateTimerEl();
+    if(qzTimeLeft<=0){
+      clearQTimers();
+      submitQuizAnswer(true);
+    }
+  },1000);
+}
+
+function updateTimerEl(){
+  const el=document.getElementById('quiz-timer');
+  if(!el) return;
+  el.textContent=qzTimeLeft;
+  el.style.color=qzTimeLeft<=1?'#EE3333':qzTimeLeft===2?'#FF8C00':'#28C828';
+  el.style.transform=qzTimeLeft<=1?'scale(1.35)':'scale(1)';
+}
+
+// ── QUIZ PAGE ─────────────────────────────
+function makeQuizPool(n,count){
+  const base=Array.from({length:9},(_,i)=>({n,m:i+1}));
+  const out=[];let last=null;
+  for(let i=0;i<count;i++){
+    let pool=base.filter(q=>!last||q.m!==last.m);
+    if(!pool.length) pool=base;
+    const q=pool[Math.floor(Math.random()*pool.length)];
+    out.push({...q});last=q;
+  }
+  return out;
+}
+
+function startQuiz(){
+  const n=G.currentLevel;
+  QZ={qs:makeQuizPool(n,30),idx:0,total:30,inp:''};
+  busy=false;
+  showPage('quiz');
+  renderQuiz();
+}
+
+function renderQuiz(){
+  const q=QZ.qs[QZ.idx];
+  const pct=Math.round((QZ.idx/QZ.total)*100);
+  document.getElementById('quiz-prog-text').textContent=`第 ${QZ.idx+1} 題 / 共 ${QZ.total} 題`;
+  document.getElementById('quiz-prog-bar').style.width=pct+'%';
+  document.getElementById('quiz-q').textContent=`${q.n} × ${q.m} = ?`;
+  document.getElementById('quiz-inp').textContent='_';
+  document.getElementById('quiz-fb').textContent='';
+  document.getElementById('quiz-fb').style.color='';
+  QZ.inp='';
+  startQTimer();
+}
+
+function nIn(d,page){
+  if(busy) return;
+  if(page===0){
+    if(QZ.inp.length<3){
+      QZ.inp+=d;
+      document.getElementById('quiz-inp').textContent=QZ.inp;
+      if(qzAutoTO) clearTimeout(qzAutoTO);
+      qzAutoTO=setTimeout(()=>submitQuizAnswer(false),800);
+    }
+  } else {
+    if(RV.inp.length<3){RV.inp+=d;document.getElementById('rev-inp').textContent=RV.inp;}
+  }
+}
+
+function nDel(page){
+  if(busy) return;
+  if(page===0){
+    QZ.inp=QZ.inp.slice(0,-1);
+    document.getElementById('quiz-inp').textContent=QZ.inp||'_';
+    if(qzAutoTO){clearTimeout(qzAutoTO);qzAutoTO=null;}
+    if(QZ.inp) qzAutoTO=setTimeout(()=>submitQuizAnswer(false),800);
+  } else {
+    RV.inp=RV.inp.slice(0,-1);
+    document.getElementById('rev-inp').textContent=RV.inp||'_';
+  }
+}
+
+function submitQuizAnswer(fromTimer){
+  if(busy) return;
+  if(!QZ.inp&&!fromTimer) return;
+  clearQTimers();
+  busy=true;
+
+  const q=QZ.qs[QZ.idx];
+  const ans=QZ.inp?parseInt(QZ.inp):-1;
+  const correct=q.n*q.m;
+  const ok=ans===correct;
+  const fb=document.getElementById('quiz-fb');
+  const ref=document.getElementById('quiz-q');
+
+  if(ok){
+    sndCorrect();
+    earnCoins(3,ref);
+    fb.textContent='答對了！棒棒！';fb.style.color='#28C828';
+  } else {
+    sndWrong();
+    loseCoins(2,ref);
+    fb.textContent=(fromTimer&&!QZ.inp)?`時間到！答案是 ${correct} 喔`:`答錯了！答案是 ${correct}，再加油！`;
+    fb.style.color='#EE3333';
+    if(QZ.total<60){
+      const extra=makeQuizPool(G.currentLevel,5);
+      QZ.qs=[...QZ.qs,...extra];
+      QZ.total=Math.min(QZ.qs.length,60);
+    }
+  }
+
+  setTimeout(()=>{
+    QZ.idx++;QZ.inp='';
+    const next=()=>{
+      busy=false;
+      if(QZ.idx>=QZ.total) startApp();
+      else renderQuiz();
+    };
+    showBadgeIfAny(next);
+  },800);
+}
+
+// ── APPLICATION PAGE ──────────────────────
+function wrongs(correct){
+  const cands=shuffle([correct+1,correct-1,correct+2,correct-2,correct+7,correct-7,correct+10].filter(x=>x>0&&x!==correct));
+  return cands.slice(0,2);
+}
+
+function startApp(){
+  const pool=shuffle(AQ[G.currentLevel]);
+  AP={qs:pool,idx:0,total:10};
+  busy=false;
+  showPage('app');
+  renderApp();
+}
+
+function renderApp(){
+  const q=AP.qs[AP.idx%AP.qs.length];
+  const ans=q.n*q.m;
+  const opts=shuffle([ans,...wrongs(ans)]);
+  const pct=Math.round((AP.idx/AP.total)*100);
+  document.getElementById('app-prog-text').textContent=`第 ${AP.idx+1} 題 / 共 ${AP.total} 題`;
+  document.getElementById('app-prog-bar').style.width=pct+'%';
+  document.getElementById('app-q').textContent=q.t;
+  document.getElementById('app-fb').textContent='';
+  document.getElementById('app-fb').style.color='';
+  const ch=document.getElementById('app-choices');
+  ch.innerHTML='';
+  opts.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.textContent=opt;
+    btn.onclick=()=>ansApp(opt,ans);
+    ch.appendChild(btn);
+  });
+}
+
+function ansApp(sel,correct){
+  if(busy) return;
+  busy=true;
+  document.querySelectorAll('.choice-btn').forEach(b=>{
+    b.disabled=true;
+    if(+b.textContent===correct) b.classList.add('ok');
+    if(+b.textContent===sel&&sel!==correct) b.classList.add('no');
+  });
+  const fb=document.getElementById('app-fb');
+  const ref=document.getElementById('app-q');
+  if(sel===correct){
+    sndCorrect();earnCoins(5,ref);
+    fb.textContent='答對了！棒棒！';fb.style.color='#28C828';
+  } else {
+    sndWrong();loseCoins(3,ref);
+    fb.textContent=`答錯了！答案是 ${correct} 喔`;fb.style.color='#EE3333';
+    if(AP.total<20) AP.total=Math.min(20,AP.total+2);
+  }
+  setTimeout(()=>{
+    AP.idx++;
+    const next=()=>{
+      busy=false;
+      if(AP.idx>=AP.total) startReview();
+      else renderApp();
+    };
+    showBadgeIfAny(next);
+  },800);
+}
+
+// ── REVIEW PAGE ───────────────────────────
+function startReview(){
+  const n=G.currentLevel;
+  const cards=shuffle(Array.from({length:9},(_,i)=>({n,m:i+1})));
+  RV={cards,sel:[],answering:false,queue:[],qIdx:0,inp:'',allOk:true};
+  busy=false;
+  showPage('review');
+  document.getElementById('rev-title').textContent=`${n} 的乘法 — 複習關卡`;
+  renderReview();
+}
+
+function renderReview(){
+  const remaining=3-RV.sel.length;
+  document.getElementById('rev-inst').textContent=
+    RV.sel.length===0?'請選擇 3 張牌！答對就過關':
+    `再選 ${remaining} 張（已選 ${RV.sel.length}/3）`;
+  document.getElementById('rev-ans-area').style.display='none';
+
+  const grid=document.getElementById('flip-grid');
+  grid.innerHTML='';
+  RV.cards.forEach((card,i)=>{
+    const isSel=RV.sel.includes(i);
+    const div=document.createElement('div');
+    div.className='flip-card'+(isSel?' selected':'');
+    div.innerHTML=`
+      <div class="fc-inner">
+        <div class="fc-front">⚽</div>
+        <div class="fc-back"><div class="card-circle">${card.n} × ${card.m}</div></div>
+      </div>`;
+    div.onclick=()=>selCard(i);
+    grid.appendChild(div);
+  });
+}
+
+function selCard(i){
+  if(RV.answering||busy) return;
+  const pos=RV.sel.indexOf(i);
+  if(pos!==-1) RV.sel.splice(pos,1);
+  else if(RV.sel.length<3) RV.sel.push(i);
+  renderReview();
+  if(RV.sel.length===3) setTimeout(beginRevAnswer,350);
+}
+
+function beginRevAnswer(){
+  RV.answering=true;RV.allOk=true;
+  RV.queue=[...RV.sel];RV.qIdx=0;RV.inp='';
+  const grid=document.getElementById('flip-grid');
+  RV.sel.forEach(i=>{
+    grid.children[i].classList.remove('selected');
+    grid.children[i].classList.add('flipped');
+  });
+  document.getElementById('rev-ans-area').style.display='block';
+  renderRevQ();
+}
+
+function renderRevQ(){
+  const grid=document.getElementById('flip-grid');
+  Array.from(grid.children).forEach(c=>c.classList.remove('answering'));
+  const ci=RV.queue[RV.qIdx];
+  if(grid.children[ci]) grid.children[ci].classList.add('answering');
+  const card=RV.cards[ci];
+  document.getElementById('rev-q').textContent=`${card.n} × ${card.m} = ?`;
+  document.getElementById('rev-inp').textContent='_';
+  document.getElementById('rev-fb').textContent='';
+  document.getElementById('rev-fb').style.color='';
+  RV.inp='';
+}
+
+function submitReview(){
+  if(busy||!RV.inp) return;
+  busy=true;
+  const ci=RV.queue[RV.qIdx];
+  const card=RV.cards[ci];
+  const ans=parseInt(RV.inp);
+  const correct=card.n*card.m;
+  const fb=document.getElementById('rev-fb');
+
+  if(ans===correct){
+    sndCorrect();
+    fb.textContent='答對了！';fb.style.color='#28C828';
+    setTimeout(()=>{
+      RV.qIdx++;busy=false;
+      if(RV.qIdx>=RV.queue.length){
+        if(RV.allOk) levelComplete();
+        else resetReview();
+      } else renderRevQ();
+    },600);
+  } else {
+    RV.allOk=false;
+    sndWrong();
+    fb.textContent=`答錯了！答案是 ${correct} 喔`;fb.style.color='#EE3333';
+    setTimeout(()=>{busy=false;resetReview();},1200);
+  }
+}
+
+function resetReview(){
+  const grid=document.getElementById('flip-grid');
+  Array.from(grid.children).forEach(c=>c.classList.remove('flipped','selected','answering'));
+  RV.sel=[];RV.answering=false;RV.queue=[];RV.qIdx=0;RV.inp='';RV.allOk=true;
+  document.getElementById('rev-ans-area').style.display='none';
+  document.getElementById('rev-inst').textContent='選 3 張重新挑戰！';
+  renderReview();
+}
+
+// ── LEVEL COMPLETE ────────────────────────
+function levelComplete(){
+  if(!G.completedLevels.includes(G.currentLevel)){
+    G.completedLevels.push(G.currentLevel);save();
+  }
+  sndVictory();
+  document.getElementById('next-lvl-btn').style.display=G.currentLevel<9?'block':'none';
+  openModal('done-modal');
+}
+
+function nextLevel(){
+  closeModal('done-modal');
+  const n=G.currentLevel+1;
+  if(n<=9){G.currentLevel=n;save();showPreview(n);}
+}
+
+// ── BACK BUTTON PROTECTION ────────────────
+history.pushState({g:1},'','');
+window.addEventListener('popstate',()=>{
+  const active=document.querySelector('.page.active');
+  if(active&&active.id!=='pg-home'){
+    history.pushState({g:1},'','');
+    const quiz=document.getElementById('pg-quiz').classList.contains('active');
+    const app=document.getElementById('pg-app').classList.contains('active');
+    const rev=document.getElementById('pg-review').classList.contains('active');
+    if(quiz||app||rev) openModal('leave-modal');
+    else goHome();
+  }
+});
+
+function leaveGame(){
+  closeModal('leave-modal');
+  goHome();
+}
+
+// ── INIT ──────────────────────────────────
+load();
+renderHome();
+</script>
+</body>
+</html>

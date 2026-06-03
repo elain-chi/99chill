@@ -118,6 +118,30 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 /* ── Back button ── */
 .back-btn{background:none;border:none;font-size:1.5rem;font-weight:700;cursor:pointer;color:#888;padding:4px 8px;display:flex;align-items:center;gap:4px}
 
+/* ── Player Select ── */
+.player-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:12px 0;padding:0 8px}
+.player-card{background:#fff;border-radius:18px;padding:14px 8px;text-align:center;cursor:pointer;border:3px solid transparent;box-shadow:0 4px 12px rgba(0,0,0,.08);transition:transform .1s,border-color .1s;touch-action:manipulation;position:relative;width:calc(33% - 8px);min-width:100px}
+.player-card:active{transform:scale(.95)}
+.pc-avatar{font-size:2.8rem;display:block;margin-bottom:4px}
+.pc-name{font-size:1rem;font-weight:700;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-stat{font-size:.72rem;color:#888;margin-top:3px}
+.player-card.add-card{border:3px dashed #ccc;background:#fafafa}
+.player-card.add-card .pc-avatar{font-size:2.2rem;color:#bbb}
+.pc-del{position:absolute;top:4px;right:6px;font-size:.75rem;color:#bbb;background:none;border:none;cursor:pointer;padding:2px}
+/* ── Avatar picker ── */
+.avatar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}
+.av-btn{background:#f5f5f5;border:3px solid transparent;border-radius:12px;font-size:1.8rem;padding:6px;cursor:pointer;transition:border-color .1s,transform .1s;touch-action:manipulation;aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+.av-btn:active{transform:scale(.9)}
+.av-btn.sel{border-color:#D94600;background:#FFF0E8}
+.name-input{width:100%;border:3px solid var(--blue);border-radius:14px;padding:10px 14px;font-size:1.3rem;text-align:center;color:#333;background:#fff;outline:none;margin:8px 0;font-family:inherit}
+/* ── Floating Game Nav ── */
+#game-nav{position:fixed;top:14px;left:14px;z-index:350;display:none;gap:6px;align-items:center}
+.gnav-btn{background:var(--gold);border:none;border-radius:20px;padding:5px 12px;font-size:1.5rem;font-weight:700;color:#7B4F00;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);display:flex;align-items:center;touch-action:manipulation;min-height:42px}
+.gnav-btn:active{transform:scale(.95)}
+/* ── Guide Modal ── */
+.guide-section{text-align:left;margin:10px 0}
+.guide-section h3{font-size:1rem;font-weight:900;color:#D94600;margin-bottom:4px}
+.guide-section p{font-size:.88rem;color:#555;line-height:1.6}
 /* ── Responsive ── */
 @media(min-width:768px){body{max-width:560px}.q-box{font-size:3.2rem}}
 @media(max-height:600px){.mult-table{font-size:1.2rem;line-height:1.9}.q-box{font-size:2rem;padding:12px}}
@@ -125,13 +149,33 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 </head>
 <body>
 
+<!-- PAGE 0: PLAYER SELECT -->
+<div id="pg-players" class="page active">
+  <div class="main-title" style="padding:24px 0 0">九九乘法挑戰賽</div>
+  <div style="margin:16px 40px 4px;background:#fff;border:3px solid var(--gold);border-radius:16px;padding:8px 16px;position:relative;text-align:center;font-size:0.92rem;color:#003E3E;line-height:1.6">
+    選擇你的腳色，展開一場數字冒險<br>用幸運餅乾蒐集可愛動物獎章吧！
+    <div style="position:absolute;bottom:-14px;left:30%;width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:14px solid var(--gold)"></div>
+    <div style="position:absolute;bottom:-10px;left:calc(30% + 2px);width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:12px solid #fff"></div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+    <div class="player-grid" id="player-grid"></div>
+  </div>
+  <div style="text-align:center;padding:12px 0 8px;color:#aaa;font-size:.85rem">可選角色</div>
+  <div style="text-align:center;font-size:2rem;letter-spacing:4px;padding:0 8px 20px;line-height:2">🎅🧞‍♂️🕵️🧛🦸🦹🧙🧙‍♀️🧚💂👨‍🌾👨‍🚒👩‍🚀🧜‍♂️👨‍🍳</div>
+</div>
+
 <!-- PAGE 1: HOME -->
-<div id="pg-home" class="page active">
+<div id="pg-home" class="page">
   <div class="hdr">
     <div class="main-title">99乘法挑戰賽</div>
-    <div class="coin-badge">
-      <div class="coin-pill">🥨<span id="home-coins">0</span></div>
-      <div class="latest-badge" id="home-badge"></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%">
+      <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px">
+        <div id="home-player-display" style="font-size:1.4rem;font-weight:700;color:#555"></div>
+        <button onclick="goPlayers()" style="background:none;border:none;font-size:0.85rem;color:#D94600;font-weight:700;cursor:pointer;padding:0;text-decoration:underline">切換角色</button>
+      </div>
+      <div class="coin-badge">
+        <div class="coin-pill">🥨<span id="home-coins">0</span></div>
+      </div>
     </div>
   </div>
   <div class="level-grid" id="level-grid"></div>
@@ -143,8 +187,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 
 <!-- PAGE 2: PREVIEW -->
 <div id="pg-preview" class="page">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-    <button class="back-btn" onclick="goHome()">回首頁🎪</button>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:4px">
     <div class="coin-pill">🥨<span id="prev-coins">0</span></div>
   </div>
   <div id="preview-title" style="font-size:2.67rem;font-weight:900;color:#D94600;text-align:center;padding:8px 0 4px"></div>
@@ -225,6 +268,57 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
       <button class="np-ok" ontouchstart="ev(event)" onclick="submitReview()">確定 ✓</button>
     </div>
     <div class="fb" id="rev-fb"></div>
+  </div>
+</div>
+
+<!-- FLOATING GAME NAV -->
+<div id="game-nav">
+  <button class="gnav-btn" onclick="homeFromGame()" title="回首頁">🎪</button>
+  <button class="gnav-btn" onclick="openModal('guide-modal')" title="遊戲說明">⚙️</button>
+</div>
+
+<!-- GUIDE MODAL -->
+<div class="modal-ov" id="guide-modal">
+  <div class="modal-box" style="max-height:80vh;overflow-y:auto;text-align:left">
+    <div class="modal-title" style="text-align:center">⚙️ 遊戲說明</div>
+    <div class="guide-section">
+      <h3>🚀 第一關：快問快答</h3>
+      <p>每題限時 5 秒，答對得 +3 🥨，答錯扣 -2 🥨，共 30 題。個位數答案輸入 1 個數字即送出，雙位數答案輸入 2 個數字即送出。</p>
+    </div>
+    <div class="guide-section">
+      <h3>📖 第二關：應用題</h3>
+      <p>三個選項中選出正確答案，答對得 +5 🥨，答錯扣 -3 🥨，共 10 題。</p>
+    </div>
+    <div class="guide-section">
+      <h3>⚽ 第三關：複習翻翻樂</h3>
+      <p>翻開三張足球卡並全部答對，才能過關！答錯任何一題就要重新選牌。</p>
+    </div>
+    <div class="guide-section">
+      <h3>🏅 獎章解鎖</h3>
+      <p>幸運餅乾累積到門檻就能解鎖動物獎章，蒐集全部 9 個獎章就能解鎖傳說中的隱藏獎章！</p>
+    </div>
+    <button class="btn btn-orange" onclick="closeModal('guide-modal')" style="margin-top:8px">知道了！</button>
+  </div>
+</div>
+
+<!-- CREATE PLAYER MODAL -->
+<div class="modal-ov" id="create-player-modal">
+  <div class="modal-box">
+    <div class="modal-title">建立新角色</div>
+    <input class="name-input" id="new-player-name" placeholder="輸入角色名稱（最多9字）" maxlength="9">
+    <div class="avatar-grid" id="avatar-grid"></div>
+    <button class="btn btn-orange" onclick="confirmCreatePlayer()" style="margin-top:4px">出發冒險！🚀</button>
+    <button class="btn btn-grey" onclick="closeModal('create-player-modal')">取消</button>
+  </div>
+</div>
+
+<!-- DELETE PLAYER MODAL -->
+<div class="modal-ov" id="delete-player-modal">
+  <div class="modal-box">
+    <div class="modal-title" style="color:#444">刪除角色？</div>
+    <div class="modal-story" id="delete-player-story"></div>
+    <button class="btn btn-orange" onclick="closeModal('delete-player-modal')">不要刪除</button>
+    <button class="btn btn-grey" onclick="confirmDeletePlayer()">確認刪除</button>
   </div>
 </div>
 
@@ -405,8 +499,14 @@ const AQ={
 ],
 };
 
+// ── AVATARS ───────────────────────────────
+const AVATARS=['🎅','🧞‍♂️','🕵️','🧛','🦸','🦹','🧙','🧙‍♀️','🧚','💂','👨‍🌾','👨‍🚒','👩‍🚀','🧜‍♂️','👨‍🍳'];
+
 // ── STATE ─────────────────────────────────
 let G={coins:0,displayCoins:0,unlockedBadges:[],completedLevels:[],currentLevel:null};
+let currentPlayer='';
+let selectedAvatar=AVATARS[0];
+let playerToDelete='';
 let badgeQueue=[];
 let badgeCb=null;
 let busy=false;
@@ -442,9 +542,25 @@ function sndBadge(){[523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>tone(f
 function sndVictory(){[523,659,784,880,1047].forEach((f,i)=>setTimeout(()=>tone(f,.22),i*90))}
 
 // ── STORAGE ───────────────────────────────
-function save(){localStorage.setItem('99chill',JSON.stringify(G))}
-function load(){
-  try{const d=localStorage.getItem('99chill');if(d)G={...G,...JSON.parse(d)}}catch(e){}
+function save(){
+  if(!currentPlayer) return;
+  // 保留 avatar 欄位
+  const prev=getPlayerMeta(currentPlayer);
+  localStorage.setItem('99chill_p_'+currentPlayer,JSON.stringify({...G,avatar:prev.avatar||selectedAvatar}));
+}
+function loadPlayer(name){
+  G={coins:0,displayCoins:0,unlockedBadges:[],completedLevels:[],currentLevel:null};
+  try{const d=localStorage.getItem('99chill_p_'+name);if(d)G={...G,...JSON.parse(d)}}catch(e){}
+  currentPlayer=name;
+  const meta=getPlayerMeta(name);
+  selectedAvatar=meta.avatar||AVATARS[0];
+}
+function getPlayerList(){
+  try{return JSON.parse(localStorage.getItem('99chill_list')||'[]')}catch(e){return[]}
+}
+function savePlayerList(list){localStorage.setItem('99chill_list',JSON.stringify(list))}
+function getPlayerMeta(name){
+  try{const d=localStorage.getItem('99chill_p_'+name);return d?JSON.parse(d):{}}catch(e){return{}}
 }
 
 // ── UTILS ─────────────────────────────────
@@ -454,6 +570,17 @@ function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('pg-'+id).classList.add('active');
   updateCoins();
+  const nav=document.getElementById('game-nav');
+  const gamePages=['preview','quiz','app','review'];
+  nav.style.display=gamePages.includes(id)?'flex':'none';
+}
+
+function homeFromGame(){
+  const quiz=document.getElementById('pg-quiz').classList.contains('active');
+  const app=document.getElementById('pg-app').classList.contains('active');
+  const rev=document.getElementById('pg-review').classList.contains('active');
+  if(quiz||app||rev) openModal('leave-modal');
+  else goHome();
 }
 
 function updateCoins(){
@@ -522,6 +649,96 @@ function closeBadgeModal(){
   setTimeout(()=>showBadgeIfAny(badgeCb),350);
 }
 
+// ── PLAYER SELECT PAGE ────────────────────
+function renderPlayers(){
+  const list=getPlayerList();
+  const grid=document.getElementById('player-grid');
+  grid.innerHTML='';
+  list.forEach(name=>{
+    const meta=getPlayerMeta(name);
+    const avatar=meta.avatar||'🎅';
+    const coins=meta.displayCoins||0;
+    const badges=(meta.unlockedBadges||[]).length;
+    const levels=(meta.completedLevels||[]).length;
+    const card=document.createElement('div');
+    card.className='player-card';
+    card.innerHTML=`<button class="pc-del" onclick="askDeletePlayer(event,'${name}')">✕</button><span class="pc-avatar">${avatar}</span><div class="pc-name">${name}</div><div class="pc-stat">🥨${coins} ｜ 🏅${badges} ｜ ⭐${levels}/9</div>`;
+    card.onclick=()=>selectPlayer(name,meta.avatar||'🎅');
+    grid.appendChild(card);
+  });
+  if(list.length<6){
+    const add=document.createElement('div');
+    add.className='player-card add-card';
+    add.innerHTML='<span class="pc-avatar">＋</span><div class="pc-name" style="color:#aaa">新增角色</div>';
+    add.onclick=openCreatePlayer;
+    grid.appendChild(add);
+  }
+}
+
+function selectPlayer(name,avatar){
+  loadPlayer(name);
+  const el=document.getElementById('home-player-display');
+  if(el) el.textContent=avatar+' '+name;
+  renderHome();
+  showPage('home');
+}
+
+function goPlayers(){
+  clearQTimers();
+  renderPlayers();
+  showPage('players');
+}
+
+function openCreatePlayer(){
+  selectedAvatar=AVATARS[0];
+  document.getElementById('new-player-name').value='';
+  const ag=document.getElementById('avatar-grid');
+  ag.innerHTML='';
+  AVATARS.forEach(a=>{
+    const btn=document.createElement('button');
+    btn.className='av-btn'+(a===selectedAvatar?' sel':'');
+    btn.textContent=a;
+    btn.onclick=()=>{
+      selectedAvatar=a;
+      ag.querySelectorAll('.av-btn').forEach(b=>b.classList.remove('sel'));
+      btn.classList.add('sel');
+    };
+    ag.appendChild(btn);
+  });
+  openModal('create-player-modal');
+}
+
+function confirmCreatePlayer(){
+  const name=document.getElementById('new-player-name').value.trim();
+  if(!name){alert('請輸入角色名稱！');return;}
+  const list=getPlayerList();
+  if(list.includes(name)){alert('這個名稱已存在，請換一個！');return;}
+  list.push(name);
+  savePlayerList(list);
+  // 建立初始資料（含頭像）
+  const initData={coins:0,displayCoins:0,unlockedBadges:[],completedLevels:[],currentLevel:null,avatar:selectedAvatar};
+  localStorage.setItem('99chill_p_'+name,JSON.stringify(initData));
+  closeModal('create-player-modal');
+  selectPlayer(name,selectedAvatar);
+}
+
+function askDeletePlayer(e,name){
+  e.stopPropagation();
+  playerToDelete=name;
+  document.getElementById('delete-player-story').textContent=`確定要刪除「${name}」的所有進度嗎？這個動作無法復原！`;
+  openModal('delete-player-modal');
+}
+
+function confirmDeletePlayer(){
+  if(!playerToDelete) return;
+  const list=getPlayerList().filter(n=>n!==playerToDelete);
+  savePlayerList(list);
+  localStorage.removeItem('99chill_p_'+playerToDelete);
+  playerToDelete='';
+  closeModal('delete-player-modal');
+  renderPlayers();
+}
+
 // ── HOME PAGE ─────────────────────────────
 function renderHome(){
   const lg=document.getElementById('level-grid');
@@ -542,7 +759,8 @@ function renderHome(){
     bg.innerHTML+=`<div class="badge-cell ${u?'unlocked':''}"><span class="be">${u?b.e:'🔒'}</span><div class="bn">${u?b.name:thText}</div></div>`;
   });
   const latest=[...BADGES].reverse().find(b=>G.unlockedBadges.includes(b.id));
-  document.getElementById('home-badge').textContent=latest?latest.e:'';
+  const playerEl=document.getElementById('home-player-display');
+  if(playerEl) playerEl.textContent=selectedAvatar+' '+currentPlayer+(latest?' '+latest.e:'');
   document.getElementById('home-coins').textContent=G.displayCoins;
 }
 
@@ -550,6 +768,7 @@ function goHome(){
   clearQTimers();
   closeModal('done-modal');
   closeModal('leave-modal');
+  if(!currentPlayer){goPlayers();return;}
   renderHome();
   showPage('home');
 }
@@ -907,8 +1126,7 @@ function leaveGame(){
 }
 
 // ── INIT ──────────────────────────────────
-load();
-renderHome();
+renderPlayers();
 </script>
 </body>
 </html>

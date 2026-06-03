@@ -14,24 +14,24 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .page.active{display:flex}
 
 /* ── Header ── */
-.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.coin-badge{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
-.coin-pill{background:var(--gold);border-radius:20px;padding:5px 14px;font-size:1rem;font-weight:700;color:#7B4F00;display:flex;align-items:center;gap:6px}
+.hdr{display:flex;flex-direction:column;align-items:center;margin-bottom:12px;gap:8px}
+.coin-badge{display:flex;flex-direction:column;align-items:flex-end;gap:4px;align-self:flex-end}
+.coin-pill{background:var(--gold);border-radius:20px;padding:5px 14px;font-size:1.5rem;font-weight:700;color:#7B4F00;display:flex;align-items:center;gap:6px}
 .latest-badge{font-size:1.4rem;text-align:right}
 
 /* ── Home Title (single line, bigger) ── */
-.main-title{font-size:1.85rem;font-weight:900;color:var(--orange);white-space:nowrap;text-shadow:2px 2px 0 rgba(255,140,0,.15);line-height:1.1}
+.main-title{font-size:2.67rem;font-weight:900;color:#D94600;text-align:center;text-shadow:2px 2px 0 rgba(217,70,0,.15);line-height:1.1;width:100%;padding:16px 0 4px}
 
 /* ── Level grid ── */
-.level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:8px 0}
-.lvl-btn{background:linear-gradient(135deg,#1E90FF,#00BFFF);color:#fff;border:none;border-radius:14px;padding:16px 8px;font-size:2rem;font-weight:900;cursor:pointer;position:relative;min-height:76px;box-shadow:0 4px 10px rgba(30,144,255,.3);transition:transform .1s,box-shadow .1s;touch-action:manipulation}
+.level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0;padding:0 24px}
+.lvl-btn{background:linear-gradient(to bottom,#D7FFEE,#7AFEC6);color:#003E3E;border:none;border-radius:20px;padding:16px 8px;font-size:2rem;font-weight:900;cursor:pointer;position:relative;aspect-ratio:1;box-shadow:0 4px 10px rgba(122,254,198,.4);transition:transform .1s,box-shadow .1s;touch-action:manipulation}
 .lvl-btn:active{transform:scale(.94);box-shadow:0 2px 4px rgba(30,144,255,.2)}
-.lvl-check{position:absolute;top:4px;right:6px;font-size:.85rem}
+.lvl-check{position:absolute;top:4px;right:6px;font-size:1.4rem}
 
 /* ── Badge section ── */
-.badge-sec h2{font-size:1rem;color:#666;text-align:center;margin-bottom:10px}
+.badge-sec h2{font-size:1.33rem;color:#666;text-align:center;margin-bottom:10px}
 .badge-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.badge-cell{text-align:center;padding:6px 2px;border-radius:10px;background:#F0F0F0}
+.badge-cell{text-align:center;padding:6px 2px;border-radius:10px;background:#F0F0F0;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .badge-cell.unlocked{background:linear-gradient(135deg,#FFE27A,#FFA500);box-shadow:0 2px 6px rgba(255,165,0,.4)}
 .badge-cell .be{font-size:1.6rem;display:block}
 .badge-cell .bn{font-size:.55rem;color:#888;margin-top:2px}
@@ -45,7 +45,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .btn-grey{background:#E0E0E0;color:#555;margin-top:10px}
 
 /* ── Mult table preview ── */
-.mult-table{font-size:1.5rem;font-weight:700;line-height:2.3;text-align:center;color:#333;flex:1;overflow-y:auto}
+.mult-table{font-size:1.5rem;font-weight:700;line-height:1.7;text-align:center;color:#333;flex:1;overflow-y:auto}
 
 /* ── Quiz timer ── */
 .timer-wrap{text-align:center;margin:2px 0 6px}
@@ -60,9 +60,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 
 /* ── Numpad ── */
 .numpad{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:6px 0}
-.np-btn{background:#fff;border:2px solid #ddd;border-radius:12px;font-size:1.5rem;font-weight:700;min-height:60px;cursor:pointer;color:#333;box-shadow:0 2px 4px rgba(0,0,0,.08);transition:transform .08s,background .08s;touch-action:manipulation}
+.np-btn{background:linear-gradient(to bottom,#E8FFF5,#ADFEDC);border:2px solid #ddd;border-radius:12px;font-size:1.5rem;font-weight:700;aspect-ratio:1;cursor:pointer;color:#003E3E;box-shadow:0 2px 4px rgba(0,0,0,.08);transition:transform .08s,background .08s;touch-action:manipulation}
 .np-btn:active{transform:scale(.9);background:#eee}
-.np-del{background:#FFEAEA;border-color:#FFBBBB;color:#CC0000;font-size:1rem}
+.np-del{background:#FFEAEA;border-color:#FFBBBB;color:#CC0000;font-size:1rem;aspect-ratio:unset;min-height:60px}
 .np-ok{grid-column:span 3;background:linear-gradient(135deg,#28C828,#1EA81E);color:#fff;border:none;border-radius:12px;font-size:1.2rem;font-weight:700;min-height:60px;cursor:pointer;box-shadow:0 4px 10px rgba(40,200,40,.35);touch-action:manipulation}
 .np-ok:active{transform:scale(.97)}
 
@@ -116,7 +116,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .modal-story{font-size:.95rem;color:#666;margin:8px 0 18px}
 
 /* ── Back button ── */
-.back-btn{background:none;border:none;font-size:1.6rem;cursor:pointer;color:#888;padding:4px 8px}
+.back-btn{background:none;border:none;font-size:1.5rem;font-weight:700;cursor:pointer;color:#888;padding:4px 8px;display:flex;align-items:center;gap:4px}
 
 /* ── Responsive ── */
 @media(min-width:768px){body{max-width:560px}.q-box{font-size:3.2rem}}
@@ -143,14 +143,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 
 <!-- PAGE 2: PREVIEW -->
 <div id="pg-preview" class="page">
-  <div class="hdr">
-    <button class="back-btn" onclick="goHome()">←</button>
-    <div id="preview-title" style="font-size:1.3rem;font-weight:700;color:var(--orange)"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+    <button class="back-btn" onclick="goHome()">回首頁🎪</button>
     <div class="coin-pill">🥨<span id="prev-coins">0</span></div>
   </div>
+  <div id="preview-title" style="font-size:2.67rem;font-weight:900;color:#D94600;text-align:center;padding:8px 0 4px"></div>
   <div class="mult-table" id="mult-table"></div>
   <div style="margin-top:auto;padding-top:16px">
-    <p style="text-align:center;color:#666;font-size:1.05rem;margin-bottom:12px">記住了嗎？</p>
+    <p style="text-align:center;color:#666;font-size:1.05rem;margin-bottom:12px" id="preview-ready-text">的乘法表都記住了嗎？開始冒險吧！</p>
     <button class="btn btn-orange" onclick="startQuiz()">🚀 開始挑戰</button>
   </div>
 </div>
@@ -492,7 +492,7 @@ function loseCoins(n,ref){
 function checkBadges(){
   BADGES.forEach(b=>{
     if(b.id==='unicorn') return;
-    if(!G.unlockedBadges.includes(b.id)&&G.coins>=b.th){
+    if(!G.unlockedBadges.includes(b.id)&&G.displayCoins>=b.th){
       G.unlockedBadges.push(b.id);
       badgeQueue.push(b);
       const main=BADGES.filter(x=>x.id!=='unicorn').map(x=>x.id);
@@ -529,7 +529,7 @@ function renderHome(){
     const done=G.completedLevels.includes(i);
     const btn=document.createElement('button');
     btn.className='lvl-btn';
-    btn.innerHTML=`${i}${done?'<span class="lvl-check">✅</span>':''}`;
+    btn.innerHTML=`${i}${done?'<span class="lvl-check">🎯</span>':''}`;
     btn.onclick=()=>enterLevel(i);
     lg.appendChild(btn);
   }
@@ -560,6 +560,7 @@ function enterLevel(n){
 // ── PREVIEW PAGE ──────────────────────────
 function showPreview(n){
   document.getElementById('preview-title').textContent=`${n} 的乘法`;
+  document.getElementById('preview-ready-text').textContent=`${n} 的乘法表都記住了嗎？開始冒險吧！`;
   let html='';
   for(let i=1;i<=9;i++) html+=`${n} × ${i} = ${n*i}<br>`;
   document.getElementById('mult-table').innerHTML=html;
@@ -574,7 +575,7 @@ function clearQTimers(){
 
 function startQTimer(){
   clearQTimers();
-  qzTimeLeft=3;
+  qzTimeLeft=5;
   updateTimerEl();
   qzInterval=setInterval(()=>{
     qzTimeLeft--;
@@ -631,11 +632,15 @@ function renderQuiz(){
 function nIn(d,page){
   if(busy) return;
   if(page===0){
-    if(QZ.inp.length<3){
+    const q=QZ.qs[QZ.idx];
+    const correct=q.n*q.m;
+    const maxDigits=correct>=10?2:1;
+    if(QZ.inp.length<maxDigits){
       QZ.inp+=d;
       document.getElementById('quiz-inp').textContent=QZ.inp;
       if(qzAutoTO) clearTimeout(qzAutoTO);
-      qzAutoTO=setTimeout(()=>submitQuizAnswer(false),800);
+      if(QZ.inp.length>=maxDigits) submitQuizAnswer(false);
+      else qzAutoTO=setTimeout(()=>submitQuizAnswer(false),800);
     }
   } else {
     if(RV.inp.length<3){RV.inp+=d;document.getElementById('rev-inp').textContent=RV.inp;}

@@ -33,8 +33,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .badge-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .badge-cell{text-align:center;padding:6px 2px;border-radius:10px;background:#F0F0F0;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .badge-cell.unlocked{background:linear-gradient(135deg,#FFE27A,#FFA500);box-shadow:0 2px 6px rgba(255,165,0,.4)}
-.badge-cell .be{font-size:1.6rem;display:block}
-.badge-cell .bn{font-size:.55rem;color:#888;margin-top:2px}
+.badge-cell .be{font-size:2rem;display:block}
+.badge-cell .bn{font-size:0.83rem;color:#888;margin-top:2px}
 .badge-cell.unlocked .bn{color:#7B4F00;font-weight:700}
 
 /* ── Buttons ── */
@@ -70,13 +70,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .fb{text-align:center;font-size:1.1rem;font-weight:700;min-height:36px;margin-top:4px}
 
 /* ── App page choices ── */
-.choice-btn{background:#fff;border:3px solid var(--blue);border-radius:14px;padding:16px;font-size:1.2rem;font-weight:700;cursor:pointer;width:100%;min-height:60px;margin:7px 0;color:#333;transition:transform .1s,background .1s;touch-action:manipulation}
-.choice-btn:active{transform:scale(.97);background:#EEF6FF}
-.choice-btn.ok{background:#EFFFEF;border-color:var(--green)}
-.choice-btn.no{background:#FFEEEE;border-color:var(--red)}
+.choice-btn{background:linear-gradient(to bottom,#E8FFF5,#ADFEDC);border:3px solid #ADFEDC;border-radius:14px;padding:16px;font-size:1.2rem;font-weight:700;cursor:pointer;width:100%;min-height:60px;margin:7px 0;color:#003E3E;transition:transform .1s,border-color .1s;touch-action:manipulation}
+.choice-btn:active{transform:scale(.97)}
+.choice-btn.ok{border-color:#F75000;border-width:4px}
+.choice-btn.no{border-color:#6C6C6C;border-width:4px}
 
 /* ── Review: Circular flip cards ── */
-.flip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:8px 0}
+.flip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0;padding:0 28px}
 .flip-card{perspective:700px;aspect-ratio:1;cursor:pointer}
 .fc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s;border-radius:50%}
 .flip-card.flipped .fc-inner{transform:rotateY(180deg)}
@@ -201,10 +201,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 <!-- PAGE 5: REVIEW (flip cards) -->
 <div id="pg-review" class="page">
   <div class="hdr">
-    <div style="font-size:1rem;font-weight:700;color:var(--orange)" id="rev-title">複習關卡</div>
+    <div style="font-size:2.67rem;font-weight:900;color:#D94600;text-align:center;width:100%;padding:8px 0 0">複習翻翻樂</div>
+  <div style="font-size:1.67rem;font-weight:700;color:#D94600;text-align:center;width:100%;padding:0 0 4px" id="rev-title"></div>
     <div class="coin-pill">🥨<span id="rev-coins">0</span></div>
   </div>
-  <p style="text-align:center;color:#666;font-size:.95rem;margin-bottom:4px" id="rev-inst">請選 3 張牌，答對就過關！</p>
+  <p style="text-align:center;color:#666;font-size:.95rem;margin-bottom:4px;line-height:1.7" id="rev-inst">翻開三張足球卡，三題都答對才能過關哦！</p>
   <div class="flip-grid" id="flip-grid"></div>
   <div id="rev-ans-area" style="display:none">
     <div style="font-size:2rem;font-weight:900;text-align:center;margin:8px 0" id="rev-q"></div>
@@ -278,7 +279,7 @@ const BADGES=[
 const AQ={
 1:[
   {t:'小明有1個盒子，每個盒子裝3顆糖，共有幾顆糖？',n:1,m:3},
-  {t:'1隻章魚有5條觸手，共有幾條觸手？',n:1,m:5},
+  {t:'1隻章魚有8條觸手，共有幾條觸手？',n:1,m:8},
   {t:'小花有1個花盆，每個花盆種7朵花，共有幾朵花？',n:1,m:7},
   {t:'1輛車有9個座位，共有幾個座位？',n:1,m:9},
   {t:'小明的1個書包裡放4本書，共有幾本書？',n:1,m:4},
@@ -292,7 +293,7 @@ const AQ={
 ],
 2:[
   {t:'小明有2個盒子，每個盒子裝3顆糖，共有幾顆糖？',n:2,m:3},
-  {t:'2隻章魚各有5條觸手，共有幾條觸手？',n:2,m:5},
+  {t:'2隻章魚各有8條觸手，共有幾條觸手？',n:2,m:8},
   {t:'小花有2個花盆，每個花盆種6朵花，共有幾朵花？',n:2,m:6},
   {t:'2個蘋果各有4個籽，共有幾個籽？',n:2,m:4},
   {t:'小明有2個書架，每個書架放7本書，共有幾本書？',n:2,m:7},
@@ -315,7 +316,7 @@ const AQ={
   {t:'3位小朋友各有9個玩具，共有幾個玩具？',n:3,m:9},
   {t:'媽媽有3個購物袋，每袋裝4個橘子，共有幾個橘子？',n:3,m:4},
   {t:'3個花瓶各插6朵玫瑰，共有幾朵玫瑰？',n:3,m:6},
-  {t:'3隻章魚各有5條觸手，共有幾條觸手？',n:3,m:5},
+  {t:'3隻章魚各有8條觸手，共有幾條觸手？',n:3,m:8},
   {t:'3位小朋友各有1個書包，共有幾個書包？',n:3,m:1},
 ],
 4:[
@@ -329,7 +330,7 @@ const AQ={
   {t:'4張桌子各有9條腿，共有幾條腿？',n:4,m:9},
   {t:'媽媽有4個購物袋，每袋裝3個水果，共有幾個水果？',n:4,m:3},
   {t:'4個花瓶各插5朵玫瑰，共有幾朵玫瑰？',n:4,m:5},
-  {t:'4隻章魚各有6條觸手，共有幾條觸手？',n:4,m:6},
+  {t:'4隻章魚各有8條觸手，共有幾條觸手？',n:4,m:8},
   {t:'4隻小狗各有1條尾巴，共有幾條尾巴？',n:4,m:1},
 ],
 5:[
@@ -343,7 +344,7 @@ const AQ={
   {t:'5張桌子各有9條腿，共有幾條腿？',n:5,m:9},
   {t:'媽媽有5個購物袋，每袋裝4個水果，共有幾個水果？',n:5,m:4},
   {t:'5個花瓶各插6朵玫瑰，共有幾朵玫瑰？',n:5,m:6},
-  {t:'5隻章魚各有7條觸手，共有幾條觸手？',n:5,m:7},
+  {t:'5隻章魚各有8條觸手，共有幾條觸手？',n:5,m:8},
   {t:'5隻小狗各有1條尾巴，共有幾條尾巴？',n:5,m:1},
 ],
 6:[
@@ -354,7 +355,7 @@ const AQ={
   {t:'小明有6個書架，每個書架放6本書，共有幾本書？',n:6,m:6},
   {t:'6個籃子各裝7顆橘子，共有幾顆橘子？',n:6,m:7},
   {t:'6張桌子各有8條腿，共有幾條腿？',n:6,m:8},
-  {t:'6隻章魚各有9條觸手，共有幾條觸手？',n:6,m:9},
+  {t:'6隻章魚各有8條觸手，共有幾條觸手？',n:6,m:8},
   {t:'媽媽有6個購物袋，每袋裝4個水果，共有幾個水果？',n:6,m:4},
   {t:'6個花瓶各插5朵玫瑰，共有幾朵玫瑰？',n:6,m:5},
   {t:'6隻小鳥各有7根羽毛，共有幾根羽毛？',n:6,m:7},
@@ -368,7 +369,7 @@ const AQ={
   {t:'小明有7個書架，每個書架放6本書，共有幾本書？',n:7,m:6},
   {t:'7個籃子各裝7顆橘子，共有幾顆橘子？',n:7,m:7},
   {t:'7張桌子各有8條腿，共有幾條腿？',n:7,m:8},
-  {t:'7隻章魚各有9條觸手，共有幾條觸手？',n:7,m:9},
+  {t:'7隻章魚各有8條觸手，共有幾條觸手？',n:7,m:8},
   {t:'7個花瓶各插4朵玫瑰，共有幾朵玫瑰？',n:7,m:4},
   {t:'7隻小鳥各有5根羽毛，共有幾根羽毛？',n:7,m:5},
   {t:'7位同學各有6支鉛筆，共有幾支鉛筆？',n:7,m:6},
@@ -382,7 +383,7 @@ const AQ={
   {t:'小明有8個書架，每個書架放6本書，共有幾本書？',n:8,m:6},
   {t:'8個籃子各裝7顆橘子，共有幾顆橘子？',n:8,m:7},
   {t:'8張桌子各有8條腿，共有幾條腿？',n:8,m:8},
-  {t:'8隻章魚各有9條觸手，共有幾條觸手？',n:8,m:9},
+  {t:'8隻章魚各有8條觸手，共有幾條觸手？',n:8,m:8},
   {t:'媽媽有8個購物袋，每袋裝4個水果，共有幾個水果？',n:8,m:4},
   {t:'8個花瓶各插5朵玫瑰，共有幾朵玫瑰？',n:8,m:5},
   {t:'8隻小鳥各有6根羽毛，共有幾根羽毛？',n:8,m:6},
@@ -396,7 +397,7 @@ const AQ={
   {t:'小明有9個書架，每個書架放6本書，共有幾本書？',n:9,m:6},
   {t:'9個籃子各裝7顆橘子，共有幾顆橘子？',n:9,m:7},
   {t:'9張桌子各有8條腿，共有幾條腿？',n:9,m:8},
-  {t:'9隻章魚各有9條觸手，共有幾條觸手？',n:9,m:9},
+  {t:'9隻章魚各有8條觸手，共有幾條觸手？',n:9,m:8},
   {t:'9個花瓶各插4朵玫瑰，共有幾朵玫瑰？',n:9,m:4},
   {t:'9隻小鳥各有5根羽毛，共有幾根羽毛？',n:9,m:5},
   {t:'9位同學各有6支鉛筆，共有幾支鉛筆？',n:9,m:6},
@@ -537,7 +538,8 @@ function renderHome(){
   bg.innerHTML='';
   BADGES.forEach(b=>{
     const u=G.unlockedBadges.includes(b.id);
-    bg.innerHTML+=`<div class="badge-cell ${u?'unlocked':''}"><span class="be">${u?b.e:'🔒'}</span><div class="bn">${u?b.name:'???'}</div></div>`;
+    const thText=b.th===Infinity?'全部蒐集':b.th+'🥨';
+    bg.innerHTML+=`<div class="badge-cell ${u?'unlocked':''}"><span class="be">${u?b.e:'🔒'}</span><div class="bn">${u?b.name:thText}</div></div>`;
   });
   const latest=[...BADGES].reverse().find(b=>G.unlockedBadges.includes(b.id));
   document.getElementById('home-badge').textContent=latest?latest.e:'';
@@ -640,7 +642,6 @@ function nIn(d,page){
       document.getElementById('quiz-inp').textContent=QZ.inp;
       if(qzAutoTO) clearTimeout(qzAutoTO);
       if(QZ.inp.length>=maxDigits) submitQuizAnswer(false);
-      else qzAutoTO=setTimeout(()=>submitQuizAnswer(false),800);
     }
   } else {
     if(RV.inp.length<3){RV.inp+=d;document.getElementById('rev-inp').textContent=RV.inp;}
@@ -652,8 +653,9 @@ function nDel(page){
   if(page===0){
     QZ.inp=QZ.inp.slice(0,-1);
     document.getElementById('quiz-inp').textContent=QZ.inp||'_';
-    if(qzAutoTO){clearTimeout(qzAutoTO);qzAutoTO=null;}
-    if(QZ.inp) qzAutoTO=setTimeout(()=>submitQuizAnswer(false),800);
+    clearQTimers();
+    qzTimeLeft=4;updateTimerEl();
+    qzInterval=setInterval(()=>{qzTimeLeft--;updateTimerEl();if(qzTimeLeft<=0){clearQTimers();submitQuizAnswer(true);}},1000);
   } else {
     RV.inp=RV.inp.slice(0,-1);
     document.getElementById('rev-inp').textContent=RV.inp||'_';
@@ -753,6 +755,7 @@ function ansApp(sel,correct){
     fb.textContent=`答錯了！答案是 ${correct} 喔`;fb.style.color='#EE3333';
     if(AP.total<20) AP.total=Math.min(20,AP.total+2);
   }
+  const delay=sel===correct?800:1800;
   setTimeout(()=>{
     AP.idx++;
     const next=()=>{
@@ -761,7 +764,7 @@ function ansApp(sel,correct){
       else renderApp();
     };
     showBadgeIfAny(next);
-  },800);
+  },delay);
 }
 
 // ── REVIEW PAGE ───────────────────────────
@@ -771,15 +774,15 @@ function startReview(){
   RV={cards,sel:[],answering:false,queue:[],qIdx:0,inp:'',allOk:true};
   busy=false;
   showPage('review');
-  document.getElementById('rev-title').textContent=`${n} 的乘法 — 複習關卡`;
+  document.getElementById('rev-title').textContent=`${n} 的乘法`;
   renderReview();
 }
 
 function renderReview(){
   const remaining=3-RV.sel.length;
-  document.getElementById('rev-inst').textContent=
-    RV.sel.length===0?'請選擇 3 張牌！答對就過關':
-    `再選 ${remaining} 張（已選 ${RV.sel.length}/3）`;
+  document.getElementById('rev-inst').innerHTML=
+    RV.sel.length===0?'翻開三張足球卡，三題都答對才能過關哦！':
+    `再翻 ${remaining} 張（已選 ${RV.sel.length}/3）`;
   document.getElementById('rev-ans-area').style.display='none';
 
   const grid=document.getElementById('flip-grid');
@@ -864,7 +867,7 @@ function resetReview(){
   Array.from(grid.children).forEach(c=>c.classList.remove('flipped','selected','answering'));
   RV.sel=[];RV.answering=false;RV.queue=[];RV.qIdx=0;RV.inp='';RV.allOk=true;
   document.getElementById('rev-ans-area').style.display='none';
-  document.getElementById('rev-inst').textContent='選 3 張重新挑戰！';
+  document.getElementById('rev-inst').innerHTML='哦歐，答錯了！<br>請重新再翻三張足球卡，<br>三題都答對才能過關哦！加油加油';
   renderReview();
 }
 

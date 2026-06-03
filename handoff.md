@@ -30,11 +30,13 @@
 - `99chill.html`
 
 ## 下次從哪裡接手
-- 多玩家系統已完成
+- 遊戲已上線，網址：https://elain-chi.github.io/99chill
 - 遊戲說明文字 Chi 要修改語氣並加入「答錯增加題目」規則，待 Chi 提供新文案後更新
 - 可考慮新增「遊戲中心」頁面（各玩家排行比較）
 
 ## 已知問題 / 注意事項
-- 專案尚未連接 GitHub remote，目前只有本機 git
+- 主檔案已改名為 index.html（原為 99chill.html）
+- GitHub repo：https://github.com/elain-chi/99chill（Public）
+- GitHub Pages 已開啟，遊戲網址：https://elain-chi.github.io/99chill
 - localStorage：`99chill_list`（玩家清單）、`99chill_p_名字`（玩家資料含 avatar）
 - Edit 工具才能安全修改中文內容，不要用 PowerShell echo/cat 寫檔

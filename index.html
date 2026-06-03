@@ -10,7 +10,7 @@
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;max-width:480px;margin:0 auto;overflow-x:hidden;position:relative}
 
 /* ── Pages ── */
-.page{display:none;flex-direction:column;min-height:100vh;padding:14px 16px 20px}
+.page{display:none;flex-direction:column;min-height:100vh;padding:14px 16px 20px;position:relative}
 .page.active{display:flex}
 
 /* ── Header ── */
@@ -20,7 +20,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .latest-badge{font-size:1.4rem;text-align:right}
 
 /* ── Home Title (single line, bigger) ── */
-.main-title{font-size:2.67rem;font-weight:900;color:#D94600;text-align:center;text-shadow:2px 2px 0 rgba(217,70,0,.15);line-height:1.1;width:100%;padding:16px 0 4px}
+.main-title{font-size:clamp(1.8rem,8vw,2.67rem);font-weight:900;color:#D94600;text-align:center;text-shadow:2px 2px 0 rgba(217,70,0,.15);line-height:1.1;width:100%;padding:16px 0 4px}
 
 /* ── Level grid ── */
 .level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0;padding:0 24px}
@@ -108,7 +108,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 /* ── Modals ── */
 .modal-ov{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.55);z-index:400;display:none;align-items:center;justify-content:center}
 .modal-ov.active{display:flex}
-.modal-box{background:#fff;border-radius:24px;padding:28px 22px;max-width:340px;width:90%;text-align:center;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}
+.modal-box{background:#fff;border-radius:24px;padding:20px 16px;max-width:340px;width:92%;text-align:center;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}
 @keyframes popIn{0%{transform:scale(.2);opacity:0}100%{transform:scale(1);opacity:1}}
 .modal-big-emoji{font-size:5rem;display:block;margin:12px 0;animation:emojiPop .5s cubic-bezier(.34,1.56,.64,1)}
 @keyframes emojiPop{0%{transform:scale(0) rotate(-20deg)}100%{transform:scale(1) rotate(0)}}
@@ -129,8 +129,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .player-card.add-card .pc-avatar{font-size:2.2rem;color:#bbb}
 .pc-del{position:absolute;top:4px;right:6px;font-size:.75rem;color:#bbb;background:none;border:none;cursor:pointer;padding:2px}
 /* ── Avatar picker ── */
-.avatar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}
-.av-btn{background:#f5f5f5;border:3px solid transparent;border-radius:12px;font-size:1.8rem;padding:6px;cursor:pointer;transition:border-color .1s,transform .1s;touch-action:manipulation;aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+.avatar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0}
+.av-btn{background:#f5f5f5;border:3px solid transparent;border-radius:12px;font-size:clamp(1.2rem,5vw,1.8rem);padding:4px;cursor:pointer;transition:border-color .1s,transform .1s;touch-action:manipulation;aspect-ratio:1;display:flex;align-items:center;justify-content:center}
 .av-btn:active{transform:scale(.9)}
 .av-btn.sel{border-color:#D94600;background:#FFF0E8}
 .name-input{width:100%;border:3px solid var(--blue);border-radius:14px;padding:10px 14px;font-size:1.3rem;text-align:center;color:#333;background:#fff;outline:none;margin:8px 0;font-family:inherit}
@@ -139,7 +139,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .gnav-btn{background:var(--gold);border:none;border-radius:20px;padding:5px 12px;font-size:1.5rem;font-weight:700;color:#7B4F00;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);display:flex;align-items:center;touch-action:manipulation;min-height:42px}
 .gnav-btn:active{transform:scale(.95)}
 /* ── Guide Modal ── */
-.guide-section{text-align:left;margin:10px 0}
+.guide-section{text-align:left;margin:18px 0}
 .guide-section h3{font-size:1rem;font-weight:900;color:#D94600;margin-bottom:4px}
 .guide-section p{font-size:.88rem;color:#555;line-height:1.6}
 /* ── Responsive ── */
@@ -151,6 +151,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 
 <!-- PAGE 0: PLAYER SELECT -->
 <div id="pg-players" class="page active">
+  <div style="position:absolute;top:14px;left:14px">
+    <button class="gnav-btn" onclick="openModal('guide-modal')">⚙️</button>
+  </div>
   <div class="main-title" style="padding:24px 0 0">九九乘法挑戰賽</div>
   <div style="margin:16px 40px 4px;background:#fff;border:3px solid var(--gold);border-radius:16px;padding:8px 16px;position:relative;text-align:center;font-size:0.92rem;color:#003E3E;line-height:1.6">
     選擇你的腳色，展開一場數字冒險<br>用幸運餅乾蒐集可愛動物獎章吧！
@@ -282,22 +285,29 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
   <div class="modal-box" style="max-height:80vh;overflow-y:auto;text-align:left">
     <div class="modal-title" style="text-align:center">⚙️ 遊戲說明</div>
     <div class="guide-section">
+      <p style="text-align:center;font-size:.95rem;color:#333;font-weight:700">歡迎來到九九乘法挑戰賽<br>闖關拿幸運餅乾蒐集可愛動物獎章<br>九關全破還能解鎖神秘的隱藏腳色！</p>
+    </div>
+    <div class="guide-section">
+      <p style="text-align:center;font-size:.82rem;color:#888;margin-bottom:6px">每個數字都有三個關卡</p>
       <h3>🚀 第一關：快問快答</h3>
-      <p>每題限時 5 秒，答對得 +3 🥨，答錯扣 -2 🥨，共 30 題。個位數答案輸入 1 個數字即送出，雙位數答案輸入 2 個數字即送出。</p>
+      <p>每題限時 5 秒，答對得 +3 🥨，答錯扣 -2 🥨，共 30 題，答錯就會增加題目喔！</p>
     </div>
     <div class="guide-section">
       <h3>📖 第二關：應用題</h3>
-      <p>三個選項中選出正確答案，答對得 +5 🥨，答錯扣 -3 🥨，共 10 題。</p>
+      <p>三個選項中選出正確答案，答對得 +5 🥨，答錯扣 -3 🥨，共 10 題，答錯也會增加題目喔！</p>
     </div>
     <div class="guide-section">
       <h3>⚽ 第三關：複習翻翻樂</h3>
-      <p>翻開三張足球卡並全部答對，才能過關！答錯任何一題就要重新選牌。</p>
+      <p>翻開三張足球卡並全部答對，才能過關！答錯任何一題就要重新選牌啦～</p>
     </div>
     <div class="guide-section">
       <h3>🏅 獎章解鎖</h3>
-      <p>幸運餅乾累積到門檻就能解鎖動物獎章，蒐集全部 9 個獎章就能解鎖傳說中的隱藏獎章！</p>
+      <p>幸運餅乾累積到指定門檻就能解鎖可愛動物獎章，蒐集全部 9 個獎章就能解鎖傳說中的隱藏腳色！</p>
     </div>
-    <button class="btn btn-orange" onclick="closeModal('guide-modal')" style="margin-top:8px">知道了！</button>
+    <div class="guide-section">
+      <p style="text-align:center;font-size:.95rem;font-weight:700;color:#D94600">你準備好了嗎？</p>
+    </div>
+    <button class="btn btn-orange" onclick="closeModal('guide-modal')" style="margin-top:8px">出發！</button>
   </div>
 </div>
 

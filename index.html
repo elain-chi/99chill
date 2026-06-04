@@ -299,7 +299,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
     <div class="guide-section">
       <p style="text-align:center;font-size:.82rem;color:#888;margin-bottom:6px">每個數字都有三個關卡</p>
       <h3>🚀 第一關：快問快答</h3>
-      <p>每題限時 5 秒，答對得 +3 🥨，答錯扣 -2 🥨，共 30 題，答錯就會增加題目喔！</p>
+      <p>初級 9 秒 / 中級 5 秒 / 高級 3 秒，答對得 +3 🥨，答錯扣 -2 🥨，共 30 題，答錯就會增加題目喔！</p>
     </div>
     <div class="guide-section">
       <h3>📖 第二關：應用題</h3>
@@ -338,7 +338,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
     <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
       <button class="diff-btn" onclick="setDifficulty('easy')">
         <span class="diff-name">🐣 初級</span>
-        <span class="diff-desc">快問快答每題有 8 秒答題時間，好好思考！</span>
+        <span class="diff-desc">快問快答每題有 9 秒答題時間，好好思考！</span>
       </button>
       <button class="diff-btn" onclick="setDifficulty('medium')">
         <span class="diff-name">🔥 中級</span>
@@ -346,7 +346,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
       </button>
       <button class="diff-btn" onclick="setDifficulty('hard')">
         <span class="diff-name">⚡ 高級</span>
-        <span class="diff-desc">每題 3 秒倒數！不只比記憶還拚手速喔！</span>
+        <span class="diff-desc">快問快答每題 3 秒、應用題每題 5 秒！不只比記憶還拚手速喔！</span>
       </button>
     </div>
   </div>
@@ -619,7 +619,7 @@ function showPage(id){
     nav.style.display='none';
   } else {
     nav.style.display='flex';
-    homeBtn.style.display=id==='home'?'none':'';
+    homeBtn.style.display='';
   }
 }
 
@@ -849,7 +849,7 @@ function clearQTimers(){
 }
 
 function quizSeconds(){
-  if(G.difficulty==='easy') return 8;
+  if(G.difficulty==='easy') return 9;
   if(G.difficulty==='hard') return 3;
   return 5;
 }
@@ -991,7 +991,7 @@ function clearApTimer(){
 }
 function startAppTimer(){
   clearApTimer();
-  apTimeLeft=10;
+  apTimeLeft=5;
   const el=document.getElementById('app-timer');
   const wrap=document.getElementById('app-timer-wrap');
   if(!el||!wrap) return;

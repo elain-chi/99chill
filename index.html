@@ -10,8 +10,10 @@
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;max-width:480px;margin:0 auto;overflow-x:hidden;position:relative}
 
 /* ── Pages ── */
-.page{display:none;flex-direction:column;min-height:100vh;padding:14px 16px 20px;position:relative}
+.page{display:none;flex-direction:column;min-height:100vh;padding:70px 16px 16px;position:relative}
 .page.active{display:flex}
+#pg-players{padding:14px 16px 16px}
+.page-title{font-size:clamp(1.4rem,5.5vw,2rem);font-weight:900;color:#D94600;text-align:center;text-shadow:2px 2px 0 rgba(217,70,0,.15);line-height:1.1;width:100%;padding:0 0 8px}
 
 /* ── Header ── */
 .hdr{display:flex;flex-direction:column;align-items:center;margin-bottom:12px;gap:8px}
@@ -45,7 +47,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .btn-grey{background:#E0E0E0;color:#555;margin-top:10px}
 
 /* ── Mult table preview ── */
-.mult-table{font-size:1.5rem;font-weight:700;line-height:1.7;text-align:center;color:#333;flex:1;overflow-y:auto}
+.mult-table{font-size:1.3rem;font-weight:700;line-height:1.55;text-align:center;color:#333;flex:0 0 auto}
 
 /* ── Quiz timer ── */
 .timer-wrap{text-align:center;margin:2px 0 6px}
@@ -76,7 +78,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .choice-btn.no{border-color:#6C6C6C;border-width:4px}
 
 /* ── Review: Circular flip cards ── */
-.flip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0;padding:0 28px}
+.flip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:4px 0;padding:0 40px;max-width:340px;align-self:center;width:100%}
 .flip-card{perspective:700px;aspect-ratio:1;cursor:pointer}
 .fc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s;border-radius:50%}
 .flip-card.flipped .fc-inner{transform:rotateY(180deg)}
@@ -85,7 +87,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .fc-front,.fc-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
 
 /* BACK (face-down) — big football emoji, no background */
-.fc-front{background:transparent;box-shadow:none;font-size:4.5rem;line-height:1}
+.fc-front{background:transparent;box-shadow:none;font-size:3rem;line-height:1}
 
 /* FACE (face-up) — white circle with question */
 .fc-back{background:transparent;border:none;box-shadow:none;transform:rotateY(180deg)}
@@ -158,7 +160,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
   <div style="position:absolute;top:14px;left:14px;z-index:100;display:flex;gap:6px">
     <button class="gnav-btn" onclick="openModal('guide-modal')">⚙️</button>
   </div>
-  <div class="main-title" style="padding:24px 0 0">九九乘法挑戰賽</div>
+  <div class="page-title" style="padding:24px 0 0">九九乘法挑戰賽</div>
   <div style="margin:16px 20px 4px;background:#fff;border:3px solid var(--gold);border-radius:16px;padding:8px 16px;position:relative;text-align:center;font-size:0.82rem;color:#003E3E;line-height:1.6;white-space:nowrap">
     選擇你的腳色，展開一場數字冒險<br>用幸運餅乾蒐集可愛動物獎章吧！
     <div style="position:absolute;bottom:-14px;left:30%;width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:14px solid var(--gold)"></div>
@@ -174,7 +176,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 <!-- PAGE 1: HOME -->
 <div id="pg-home" class="page">
   <div class="hdr">
-    <div class="main-title">99乘法挑戰賽</div>
+    <div class="page-title">99乘法挑戰賽</div>
     <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%">
       <div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px">
         <div id="home-player-display" style="font-size:1.4rem;font-weight:700;color:#555"></div>
@@ -194,10 +196,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 
 <!-- PAGE 2: PREVIEW -->
 <div id="pg-preview" class="page">
-  <div style="display:flex;justify-content:flex-end;margin-bottom:4px">
+  <div style="display:flex;justify-content:flex-end;margin-bottom:2px">
     <div class="coin-pill">🥨<span id="prev-coins">0</span></div>
   </div>
-  <div id="preview-title" style="font-size:2.67rem;font-weight:900;color:#D94600;text-align:center;padding:8px 0 16px"></div>
+  <div id="preview-title" class="page-title"></div>
   <div class="mult-table" id="mult-table" style="flex:0 0 auto"></div>
   <div style="padding-top:16px">
     <p style="text-align:center;color:#666;font-size:1.05rem;margin-bottom:12px" id="preview-ready-text">的乘法表都記住了嗎？開始冒險吧！</p>
@@ -254,8 +256,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 <!-- PAGE 5: REVIEW (flip cards) -->
 <div id="pg-review" class="page">
   <div class="hdr">
-    <div style="font-size:2.67rem;font-weight:900;color:#D94600;text-align:center;width:100%;padding:8px 0 0">複習翻翻樂</div>
-  <div style="font-size:1.67rem;font-weight:700;color:#D94600;text-align:center;width:100%;padding:0 0 4px" id="rev-title"></div>
+    <div class="page-title" style="padding-bottom:2px">複習翻翻樂</div>
+    <div style="font-size:1.1rem;font-weight:700;color:#D94600;text-align:center;width:100%;padding:0 0 4px" id="rev-title"></div>
     <div class="coin-pill">🥨<span id="rev-coins">0</span></div>
   </div>
   <p style="text-align:center;color:#666;font-size:.95rem;margin-bottom:4px;line-height:1.7" id="rev-inst">翻開三張足球卡，三題都答對才能過關哦！</p>

@@ -151,7 +151,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 
 <!-- PAGE 0: PLAYER SELECT -->
 <div id="pg-players" class="page active">
-  <div style="position:absolute;top:14px;left:14px;z-index:100">
+  <div style="position:absolute;top:14px;left:14px;z-index:100;display:flex;gap:6px">
     <button class="gnav-btn" onclick="openModal('guide-modal')">⚙️</button>
   </div>
   <div class="main-title" style="padding:24px 0 0">九九乘法挑戰賽</div>
@@ -239,6 +239,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
   </div>
   <div class="prog-text" id="app-prog-text"></div>
   <div class="prog-bar-wrap"><div class="prog-bar" id="app-prog-bar" style="width:0%"></div></div>
+  <div id="app-timer-wrap" style="display:none;text-align:center;margin:4px 0">
+    <span id="app-timer" style="font-size:2rem;font-weight:900;color:#28C828">10</span>
+  </div>
   <div class="q-box" style="font-size:1.3rem;line-height:1.6" id="app-q">應用題</div>
   <div id="app-choices"></div>
   <div class="fb" id="app-fb"></div>
@@ -319,6 +322,18 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
     <div class="avatar-grid" id="avatar-grid"></div>
     <button class="btn btn-orange" onclick="confirmCreatePlayer()" style="margin-top:4px">出發冒險！🚀</button>
     <button class="btn btn-grey" onclick="closeModal('create-player-modal')">取消</button>
+  </div>
+</div>
+
+<!-- DIFFICULTY MODAL -->
+<div class="modal-ov" id="difficulty-modal">
+  <div class="modal-box">
+    <div class="modal-title">選擇難易度</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+      <button class="btn btn-orange" onclick="setDifficulty('easy')">🐣 初級　每題 8 秒</button>
+      <button class="btn btn-orange" onclick="setDifficulty('medium')">🔥 中級　每題 5 秒</button>
+      <button class="btn btn-orange" onclick="setDifficulty('hard')">⚡ 高級　快答 3 秒・應用 10 秒</button>
+    </div>
   </div>
 </div>
 
@@ -513,7 +528,7 @@ const AQ={
 const AVATARS=['🎅','🧞‍♂️','🕵️','🧛','🦸','🦹','🧙','🧙‍♀️','🧚','💂','👨‍🌾','👨‍🚒','👩‍🚀','🧜‍♂️','👨‍🍳'];
 
 // ── STATE ─────────────────────────────────
-let G={coins:0,displayCoins:0,unlockedBadges:[],completedLevels:[],currentLevel:null};
+let G={coins:0,displayCoins:0,unlockedBadges:[],completedLevels:[],currentLevel:null,difficulty:'medium'};
 let currentPlayer='';
 let selectedAvatar=AVATARS[0];
 let playerToDelete='';
@@ -529,6 +544,9 @@ let RV={cards:[],sel:[],answering:false,queue:[],qIdx:0,inp:'',allOk:true};
 let qzInterval=null;
 let qzAutoTO=null;
 let qzTimeLeft=3;
+// App timer (hard mode)
+let apInterval=null;
+let apTimeLeft=10;
 
 // ── AUDIO ─────────────────────────────────
 let actx=null;
@@ -581,8 +599,13 @@ function showPage(id){
   document.getElementById('pg-'+id).classList.add('active');
   updateCoins();
   const nav=document.getElementById('game-nav');
-  const gamePages=['preview','quiz','app','review'];
-  nav.style.display=gamePages.includes(id)?'flex':'none';
+  const homeBtn=nav.querySelector('button:first-child');
+  if(id==='players'){
+    nav.style.display='none';
+  } else {
+    nav.style.display='flex';
+    homeBtn.style.display=id==='home'?'none':'';
+  }
 }
 
 function homeFromGame(){
@@ -690,6 +713,11 @@ function selectPlayer(name,avatar){
   const el=document.getElementById('home-player-display');
   if(el) el.textContent=avatar+' '+name;
   renderHome();
+  openModal('difficulty-modal');
+}
+function setDifficulty(d){
+  G.difficulty=d;
+  closeModal('difficulty-modal');
   showPage('home');
 }
 
@@ -776,6 +804,7 @@ function renderHome(){
 
 function goHome(){
   clearQTimers();
+  clearApTimer();
   closeModal('done-modal');
   closeModal('leave-modal');
   if(!currentPlayer){goPlayers();return;}
@@ -804,9 +833,14 @@ function clearQTimers(){
   if(qzAutoTO){clearTimeout(qzAutoTO);qzAutoTO=null;}
 }
 
+function quizSeconds(){
+  if(G.difficulty==='easy') return 8;
+  if(G.difficulty==='hard') return 3;
+  return 5;
+}
 function startQTimer(){
   clearQTimers();
-  qzTimeLeft=5;
+  qzTimeLeft=quizSeconds();
   updateTimerEl();
   qzInterval=setInterval(()=>{
     qzTimeLeft--;
@@ -883,7 +917,7 @@ function nDel(page){
     QZ.inp=QZ.inp.slice(0,-1);
     document.getElementById('quiz-inp').textContent=QZ.inp||'_';
     clearQTimers();
-    qzTimeLeft=4;updateTimerEl();
+    qzTimeLeft=Math.min(4,quizSeconds());updateTimerEl();
     qzInterval=setInterval(()=>{qzTimeLeft--;updateTimerEl();if(qzTimeLeft<=0){clearQTimers();submitQuizAnswer(true);}},1000);
   } else {
     RV.inp=RV.inp.slice(0,-1);
@@ -937,6 +971,28 @@ function wrongs(correct){
   return cands.slice(0,2);
 }
 
+function clearApTimer(){
+  if(apInterval){clearInterval(apInterval);apInterval=null;}
+}
+function startAppTimer(){
+  clearApTimer();
+  apTimeLeft=10;
+  const el=document.getElementById('app-timer');
+  const wrap=document.getElementById('app-timer-wrap');
+  if(!el||!wrap) return;
+  wrap.style.display='block';
+  el.textContent=apTimeLeft;
+  el.style.color='#28C828';
+  apInterval=setInterval(()=>{
+    apTimeLeft--;
+    el.textContent=apTimeLeft;
+    el.style.color=apTimeLeft<=3?'#EE3333':apTimeLeft<=5?'#FF8C00':'#28C828';
+    if(apTimeLeft<=0){
+      clearApTimer();
+      ansApp(-999,-998); // force wrong answer on timeout
+    }
+  },1000);
+}
 function startApp(){
   const pool=shuffle(AQ[G.currentLevel]);
   AP={qs:pool,idx:0,total:10};
@@ -964,11 +1020,14 @@ function renderApp(){
     btn.onclick=()=>ansApp(opt,ans);
     ch.appendChild(btn);
   });
+  if(G.difficulty==='hard') startAppTimer();
+  else { clearApTimer(); document.getElementById('app-timer-wrap').style.display='none'; }
 }
 
 function ansApp(sel,correct){
   if(busy) return;
   busy=true;
+  clearApTimer();
   document.querySelectorAll('.choice-btn').forEach(b=>{
     b.disabled=true;
     if(+b.textContent===correct) b.classList.add('ok');

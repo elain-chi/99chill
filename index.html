@@ -114,6 +114,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 @keyframes popIn{0%{transform:scale(.2);opacity:0}100%{transform:scale(1);opacity:1}}
 .modal-big-emoji{font-size:5rem;display:block;margin:12px 0;animation:emojiPop .5s cubic-bezier(.34,1.56,.64,1)}
 @keyframes emojiPop{0%{transform:scale(0) rotate(-20deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes walkRL{0%{left:80%;transform:scaleX(1)}49%{left:5%;transform:scaleX(1)}50%{left:5%;transform:scaleX(-1)}99%{left:80%;transform:scaleX(-1)}100%{left:80%;transform:scaleX(1)}}
+@keyframes walkLR{0%{left:5%;transform:scaleX(-1)}49%{left:80%;transform:scaleX(-1)}50%{left:80%;transform:scaleX(1)}99%{left:5%;transform:scaleX(1)}100%{left:5%;transform:scaleX(-1)}}
+.pause-walker{position:absolute;font-size:2rem;top:50%;margin-top:-1rem;animation-duration:2.4s;animation-timing-function:linear;animation-iteration-count:infinite;}
 .modal-title{font-size:1.4rem;font-weight:900;color:var(--orange);margin-bottom:6px}
 .modal-story{font-size:.95rem;color:#666;margin:8px 0 18px}
 
@@ -215,12 +218,19 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
   </div>
   <div class="prog-text" id="quiz-prog-text"></div>
   <div class="prog-bar-wrap"><div class="prog-bar" id="quiz-prog-bar" style="width:0%"></div></div>
-  <div class="timer-wrap">
+  <div class="timer-wrap" style="display:flex;align-items:center;justify-content:center;gap:12px">
     <span id="quiz-timer" style="color:#28C828">3</span>
     <span style="font-size:1rem;color:#888;margin-left:2px">秒</span>
+    <button id="quiz-pause-btn" onclick="togglePause()" style="font-size:.85rem;padding:4px 10px;border-radius:20px;border:2px solid #F4B400;background:#FFF8E1;color:#7B5800;font-weight:700;cursor:pointer">⏸ 暫停 (<span id="quiz-pause-cnt">3</span>)</button>
   </div>
-  <div class="q-box" id="quiz-q">？</div>
-  <div class="inp-box" id="quiz-inp">_</div>
+  <div style="position:relative">
+    <div class="q-box" id="quiz-q">？</div>
+    <div class="inp-box" id="quiz-inp">_</div>
+    <div id="quiz-pause-cover" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,248,220,.97);border-radius:16px;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:10;overflow:hidden">
+      <div id="quiz-pause-walkers" style="position:relative;width:100%;height:60px"></div>
+      <button onclick="togglePause()" style="font-size:1rem;padding:10px 28px;border-radius:24px;border:none;background:#F4B400;color:#fff;font-weight:900;cursor:pointer">▶ 繼續挑戰</button>
+    </div>
+  </div>
   <div class="numpad">
     <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('0',0)">0</button>
     <button class="np-btn" ontouchstart="ev(event)" onclick="nIn('1',0)">1</button>
@@ -853,6 +863,11 @@ function quizSeconds(){
   if(G.difficulty==='hard') return 3;
   return 5;
 }
+function quizDelSeconds(){
+  if(G.difficulty==='easy') return 7;
+  if(G.difficulty==='hard') return 3;
+  return 4;
+}
 function startQTimer(){
   clearQTimers();
   qzTimeLeft=quizSeconds();
@@ -888,9 +903,37 @@ function makeQuizPool(n,count){
   return out;
 }
 
+function togglePause(){
+  if(!QZ) return;
+  if(!QZ.paused){
+    if(QZ.pausesLeft<=0) return;
+    QZ.paused=true;
+    QZ.pausesLeft--;
+    clearQTimers();
+    const cover=document.getElementById('quiz-pause-cover');
+    cover.style.display='flex';
+    // 建立走路動畫角色
+    const latest=[...BADGES].reverse().find(b=>G.unlockedBadges.includes(b.id));
+    const animal=latest?latest.e:'🌟';
+    const walkers=document.getElementById('quiz-pause-walkers');
+    walkers.innerHTML=
+      `<span class="pause-walker" style="animation-name:walkRL;animation-delay:0s">${selectedAvatar}</span>`+
+      `<span class="pause-walker" style="animation-name:walkLR;animation-delay:1.2s">${animal}</span>`;
+    document.getElementById('quiz-pause-btn').style.opacity='0.4';
+    document.getElementById('quiz-pause-btn').style.pointerEvents='none';
+    document.getElementById('quiz-pause-cnt').textContent=QZ.pausesLeft;
+  } else {
+    QZ.paused=false;
+    document.getElementById('quiz-pause-cover').style.display='none';
+    document.getElementById('quiz-pause-btn').style.opacity= QZ.pausesLeft>0 ? '1':'0.4';
+    document.getElementById('quiz-pause-btn').style.pointerEvents= QZ.pausesLeft>0 ? 'auto':'none';
+    qzInterval=setInterval(()=>{qzTimeLeft--;updateTimerEl();if(qzTimeLeft<=0){clearQTimers();submitQuizAnswer(true);}},1000);
+  }
+}
+
 function startQuiz(){
   const n=G.currentLevel;
-  QZ={qs:makeQuizPool(n,30),idx:0,total:30,inp:''};
+  QZ={qs:makeQuizPool(n,30),idx:0,total:30,inp:'',paused:false,pausesLeft:3};
   busy=false;
   showPage('quiz');
   renderQuiz();
@@ -906,6 +949,14 @@ function renderQuiz(){
   document.getElementById('quiz-fb').textContent='';
   document.getElementById('quiz-fb').style.color='';
   QZ.inp='';
+  QZ.paused=false;
+  document.getElementById('quiz-pause-cover').style.display='none';
+  const pb=document.getElementById('quiz-pause-btn');
+  if(pb){
+    pb.style.opacity=QZ.pausesLeft>0?'1':'0.4';
+    pb.style.pointerEvents=QZ.pausesLeft>0?'auto':'none';
+    document.getElementById('quiz-pause-cnt').textContent=QZ.pausesLeft;
+  }
   startQTimer();
 }
 
@@ -932,7 +983,7 @@ function nDel(page){
     QZ.inp=QZ.inp.slice(0,-1);
     document.getElementById('quiz-inp').textContent=QZ.inp||'_';
     clearQTimers();
-    qzTimeLeft=Math.min(4,quizSeconds());updateTimerEl();
+    qzTimeLeft=quizDelSeconds();updateTimerEl();
     qzInterval=setInterval(()=>{qzTimeLeft--;updateTimerEl();if(qzTimeLeft<=0){clearQTimers();submitQuizAnswer(true);}},1000);
   } else {
     RV.inp=RV.inp.slice(0,-1);

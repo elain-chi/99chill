@@ -860,9 +860,9 @@ function clearQTimers(){
 }
 
 function quizSeconds(){
-  if(G.difficulty==='easy') return 9;
+  if(G.difficulty==='easy') return 11;
   if(G.difficulty==='hard') return 3;
-  return 5;
+  return 6;
 }
 function quizDelSeconds(){
   if(G.difficulty==='easy') return 7;
@@ -892,13 +892,19 @@ function updateTimerEl(){
 }
 
 // ── QUIZ PAGE ─────────────────────────────
-function makeQuizPool(n,count){
+function makeQuizPool(n,count,wrongMs=[]){
   const base=Array.from({length:9},(_,i)=>({n,m:i+1}));
   const out=[];let last=null;
   for(let i=0;i<count;i++){
     let pool=base.filter(q=>!last||q.m!==last.m);
     if(!pool.length) pool=base;
-    const q=pool[Math.floor(Math.random()*pool.length)];
+    // 錯題出現率 +20%：建立加權清單
+    const weighted=[];
+    pool.forEach(q=>{
+      weighted.push(q);
+      if(wrongMs.includes(q.m)) weighted.push(q); // 多放一份（約+20%效果）
+    });
+    const q=weighted[Math.floor(Math.random()*weighted.length)];
     out.push({...q});last=q;
   }
   return out;
@@ -934,7 +940,7 @@ function togglePause(){
 
 function startQuiz(){
   const n=G.currentLevel;
-  QZ={qs:makeQuizPool(n,30),idx:0,total:30,inp:'',paused:false,pausesLeft:3};
+  QZ={qs:makeQuizPool(n,30),idx:0,total:30,inp:'',paused:false,pausesLeft:3,wrongMs:[]};
   busy=false;
   showPage('quiz');
   renderQuiz();
@@ -1014,8 +1020,9 @@ function submitQuizAnswer(fromTimer){
     loseCoins(2,ref);
     fb.textContent=(fromTimer&&!QZ.inp)?`時間到！答案是 ${correct} 喔`:`答錯了！答案是 ${correct}，再加油！`;
     fb.style.color='#EE3333';
+    if(!QZ.wrongMs.includes(q.m)) QZ.wrongMs.push(q.m);
     if(QZ.total<60){
-      const extra=makeQuizPool(G.currentLevel,5);
+      const extra=makeQuizPool(G.currentLevel,5,QZ.wrongMs);
       QZ.qs=[...QZ.qs,...extra];
       QZ.total=Math.min(QZ.qs.length,60);
     }

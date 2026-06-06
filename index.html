@@ -102,8 +102,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .flip-card.answering .card-circle{border-color:var(--gold);box-shadow:0 0 0 4px var(--gold),0 0 20px rgba(255,215,0,.65)}
 
 /* ── Coin animation ── */
-.coin-anim{position:fixed;font-size:1.3rem;font-weight:700;z-index:500;pointer-events:none;animation:floatUp .9s ease-out forwards}
-.coin-anim.pos{color:#B8860B;text-shadow:0 0 6px rgba(255,215,0,.8)}
+.coin-anim{position:fixed;font-size:1.8rem;font-weight:700;z-index:500;pointer-events:none;animation:floatUp .9s ease-out forwards}
+.coin-anim.pos{color:#00AEAE;text-shadow:0 0 6px rgba(0,200,200,.5)}
 .coin-anim.neg{color:var(--red)}
 @keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(.8)}}
 
@@ -114,9 +114,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 @keyframes popIn{0%{transform:scale(.2);opacity:0}100%{transform:scale(1);opacity:1}}
 .modal-big-emoji{font-size:5rem;display:block;margin:12px 0;animation:emojiPop .5s cubic-bezier(.34,1.56,.64,1)}
 @keyframes emojiPop{0%{transform:scale(0) rotate(-20deg)}100%{transform:scale(1) rotate(0)}}
-@keyframes walkRL{0%{left:80%;transform:scaleX(1)}49%{left:5%;transform:scaleX(1)}50%{left:5%;transform:scaleX(-1)}99%{left:80%;transform:scaleX(-1)}100%{left:80%;transform:scaleX(1)}}
-@keyframes walkLR{0%{left:5%;transform:scaleX(-1)}49%{left:80%;transform:scaleX(-1)}50%{left:80%;transform:scaleX(1)}99%{left:5%;transform:scaleX(1)}100%{left:5%;transform:scaleX(-1)}}
+@keyframes walkApproach{0%,100%{left:5%;transform:scaleX(1)}49%{left:37%;transform:scaleX(1)}50%{left:37%;transform:scaleX(-1)}99%{left:5%;transform:scaleX(-1)}}
+@keyframes walkRetreat{0%,100%{left:85%;transform:scaleX(-1)}49%{left:53%;transform:scaleX(-1)}50%{left:53%;transform:scaleX(1)}99%{left:85%;transform:scaleX(1)}}
 .pause-walker{position:absolute;font-size:2rem;top:50%;margin-top:-1rem;animation-duration:2.4s;animation-timing-function:linear;animation-iteration-count:infinite;}
+@keyframes bounce{0%,100%{top:50%;margin-top:-1rem}50%{top:30%;margin-top:-1rem}}
 .modal-title{font-size:1.4rem;font-weight:900;color:var(--orange);margin-bottom:6px}
 .modal-story{font-size:.95rem;color:#666;margin:8px 0 18px}
 
@@ -226,7 +227,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
   <div style="position:relative">
     <div class="q-box" id="quiz-q">？</div>
     <div class="inp-box" id="quiz-inp">_</div>
-    <div id="quiz-pause-cover" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,248,220,.97);border-radius:16px;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:10;overflow:hidden">
+    <div id="quiz-pause-cover" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:#FFF8DC;border-radius:16px;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:10;overflow:hidden">
       <div id="quiz-pause-walkers" style="position:relative;width:100%;height:60px"></div>
       <button onclick="togglePause()" style="font-size:1rem;padding:10px 28px;border-radius:24px;border:none;background:#F4B400;color:#fff;font-weight:900;cursor:pointer">▶ 繼續挑戰</button>
     </div>
@@ -917,8 +918,8 @@ function togglePause(){
     const animal=latest?latest.e:'🌟';
     const walkers=document.getElementById('quiz-pause-walkers');
     walkers.innerHTML=
-      `<span class="pause-walker" style="animation-name:walkRL;animation-delay:0s">${selectedAvatar}</span>`+
-      `<span class="pause-walker" style="animation-name:walkLR;animation-delay:1.2s">${animal}</span>`;
+      `<span class="pause-walker" style="animation:walkApproach 2.4s linear infinite,bounce 0.4s ease-in-out infinite">${selectedAvatar}</span>`+
+      `<span class="pause-walker" style="animation:walkRetreat 2.4s linear infinite,bounce 0.4s ease-in-out infinite 0.2s">${animal}</span>`;
     document.getElementById('quiz-pause-btn').style.opacity='0.4';
     document.getElementById('quiz-pause-btn').style.pointerEvents='none';
     document.getElementById('quiz-pause-cnt').textContent=QZ.pausesLeft;
